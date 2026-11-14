@@ -19,6 +19,11 @@ Living technical record for ML Portfolio. Companion to [SPEC.md](../SPEC.md): th
 | [005](#adr-005-net-10-sdk-pinned-slnx-solution-format) | .NET 10, SDK pinned via `global.json`, `.slnx` solution | Accepted | 0 |
 | [006](#adr-006-local-first-hosting-deployment-deferred) | Local-first; hosting and domain deferred | Accepted | 0 |
 | [007](#adr-007-v1-scope-two-pilots-plus-flagship-placeholders) | v1 scope: two pilots plus flagship placeholders | Accepted | 0 |
+| [008](#adr-008-visual-direction-editorial-minimal-with-css-tokens) | Visual direction: "Editorial minimal" with CSS tokens | Accepted | 1 |
+| [009](#adr-009-category-names-and-per-project-disclaimer) | Categories `flagship`/`zoo`; disclaimer is per project | Accepted | 1 |
+| [010](#adr-010-fail-fast-immutable-projectcatalog) | Fail-fast, immutable `ProjectCatalog` | Accepted | 1 |
+| [011](#adr-011-site-owner-settings-in-configuration) | Site owner settings in configuration | Accepted | 1 |
+| [012](#adr-012-theme-before-first-paint-client-side-filtering-no-jquery) | Theme before first paint; client-side filtering; no jQuery | Accepted | 1 |
 
 ---
 
@@ -75,6 +80,42 @@ Living technical record for ML Portfolio. Companion to [SPEC.md](../SPEC.md): th
 - **Decision:** v1 builds two Model Zoo pilots end to end: **logistic regression** (classification output) and **linear regression** (numeric output), so both output types in `schema.json` are exercised and parity-tested. Flagships (e.g. NSE regime classifier) ship as "Coming soon" placeholders (`status: "coming-soon"`, `inferenceMode: "none"`) in Phase 3b and are built for real in Phase 4.
 - **Open:** NSE classifier input mode (manual features vs historical-date lookup) is deferred until Phase 4 (SPEC §13, Q6).
 
+## ADR-008: Visual direction: "Editorial minimal" with CSS tokens
+
+- **Status:** Accepted · **Phase:** 1
+- **Context:** The site must read as built by a detail-oriented professional. Three directions were mocked up (editorial minimal, data-forward dark, soft modern); the owner chose the first.
+- **Decision:** Warm off-white, Georgia serif headings, system sans body, thin borders, one indigo accent. All colours live as tokens under `[data-bs-theme="light|dark"]` in `site.css`, mapped onto Bootstrap's `--bs-*` variables. No web fonts. Cards lift on hover, with `prefers-reduced-motion` respected and a skip link plus visible focus rings.
+- **Consequences:** + no font downloads, consistent theming for later pages and charts. − Georgia is a safe but not distinctive choice; the owner expects to refine the look iteratively.
+
+## ADR-009: Category names and per-project disclaimer
+
+- **Status:** Accepted · **Phase:** 1
+- **Context:** The owner may build non-finance flagship projects, so a "Finance & Fintech ML" section name and a disclaimer tied to it were too narrow.
+- **Decision:** Categories are `flagship` ("Flagship ML") and `zoo` ("Model Zoo"). The finance disclaimer is a separate `disclaimer: "finance"` field per project in `projects.json` (rendered from Phase 2). The catalog rejects unknown categories, statuses and inference modes.
+- **Consequences:** + new domains need no code change. − the disclaimer must be set deliberately on each finance project (covered by the per-project checklist).
+
+## ADR-010: Fail-fast, immutable `ProjectCatalog`
+
+- **Status:** Accepted · **Phase:** 1
+- **Context:** Every page depends on `projects.json`. A typo should not surface as a broken card or a runtime 500.
+- **Decision:** `ProjectCatalog.LoadFile` parses and validates the whole file once at startup (required fields, slug format and uniqueness, allowed enum values; JSON comments and trailing commas allowed) and reports every problem in one `ProjectCatalogException`. The catalog is a singleton, immutable, sorted by `order` then title. Edits to `projects.json` need an app restart.
+- **Consequences:** + bad data is caught immediately with a readable message; no per-request I/O. − no hot reload of the catalog; acceptable for a portfolio, revisit if editing live becomes useful.
+
+## ADR-011: Site owner settings in configuration
+
+- **Status:** Accepted · **Phase:** 1
+- **Decision:** Owner name, tagline, description and GitHub/LinkedIn URLs are bound from the `Site` section of `appsettings.json` (`SiteOptions`). A social link renders only when its URL is non-empty, so the site never ships made-up URLs. Environment variables (`Site__GitHubUrl`) can override them in deployment.
+- **Consequences:** + content changes need no code change. − the URLs are blank until the owner fills them in.
+
+## ADR-012: Theme before first paint, client-side filtering, no jQuery
+
+- **Status:** Accepted · **Phase:** 1
+- **Decision:**
+  - A small inline script in `<head>` sets `data-bs-theme` from `localStorage` or `prefers-color-scheme` before the stylesheet applies, avoiding a flash; the toggle persists the choice (storage access wrapped in try/catch).
+  - Tag filter and search are vanilla JS over server-rendered cards (`data-tags`, `data-search`), with `aria-pressed` on chips and a polite live region announcing counts.
+  - The template's jQuery and scoped-CSS references were removed; Bootstrap's bundle remains for later components.
+- **Consequences:** + fast, no framework, works without a build step. − an inline script will need a CSP nonce or hash when security headers are added in Phase 6.
+
 ---
 
 ## Phase Log
@@ -92,7 +133,26 @@ Record what was actually built, deviations from the spec, gotchas and follow-ups
   - Git on Windows prints LF→CRLF warnings; harmless. A `.gitattributes` can set line endings explicitly if desired.
 - **Follow-ups:** none blocking. Phase 1 next (ProjectCatalog, homepage, layout, themes).
 
-### Phase 1: Catalog, homepage, layout, themes (not started)
+### Phase 1: Catalog, homepage, layout, themes (complete)
+
+- **Built:**
+  - `ProjectCatalog` / `IProjectCatalog` (validated, immutable, singleton), `ProjectMeta`, `SiteOptions`, `HomeViewModel`.
+  - `App_Data/projects.json` with three entries (NSE flagship plus the two pilots), all `coming-soon`, and placeholder SVG thumbnails under `wwwroot/projects/<slug>/charts/`.
+  - Shared layout (skip link, header with Projects/GitHub/LinkedIn and theme toggle, footer), Home view with hero, tag chips, search and two card sections (`_ProjectSection` partial), restyled Error view.
+  - `site.css` tokens for the editorial-minimal theme in light and dark; `site.js` (theme) and `home.js` (filter/search).
+  - Per-page title, description and OpenGraph tags; `public partial class Program` for integration tests.
+- **Verification:** `dotnet test` passes 35 tests (catalog parsing, validation, sorting and lookup; homepage content, assets and absent social links). Run locally and checked in Chrome: dark theme from the system setting, toggle switches and persists, tag filter, search and the empty state behave correctly.
+- **Deviations from the plan:**
+  - The two pilots are `coming-soon`, not `live`, until Phase 3 builds them, so a "Live" badge never links to a missing page.
+  - Social links are hidden until configured, instead of showing placeholder URLs.
+  - The template's Privacy page and `_Layout.cshtml.css` were removed.
+- **Gotchas:** Razor HTML-encodes `·` in `<title>`, so tests match around it. A `SAME`/`same` duplicate-slug test first failed because the lowercase-slug rule fires before the duplicate check.
+- **Follow-ups:**
+  - Hero copy says "each with a live demo", which is not yet true; reword or wait for Phase 3.
+  - Fill in `Site:GitHubUrl` and `Site:LinkedInUrl`.
+  - Card links 404 until Phase 2.
+  - Add a CSP when security headers arrive in Phase 6 (inline theme script).
+  - Not yet checked: Lighthouse scores and the narrow-screen layout.
 ### Phase 2: Generic project page, content, gallery, dynamic form (not started)
 ### Phase 3: Pilot projects, `PredictController`, parity tests (not started)
 ### Phase 3b: Flagship placeholders (not started)

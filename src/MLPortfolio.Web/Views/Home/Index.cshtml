@@ -1,8 +1,37 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model HomeViewModel
+@{
+    ViewData["Title"] = null;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="hero">
+    <div class="container">
+        <h1 class="hero-title">@Model.Site.Tagline</h1>
+        <p class="hero-sub">@Model.Site.Description</p>
+    </div>
+</section>
+
+<section id="projects" class="container projects" aria-labelledby="projects-heading">
+    <h2 id="projects-heading" class="visually-hidden">Projects</h2>
+
+    <div class="filter-bar">
+        <div class="chips" role="group" aria-label="Filter by tag">
+            <button type="button" class="chip is-active" data-tag="" aria-pressed="true">All</button>
+            @foreach (var tag in Model.Tags)
+            {
+                <button type="button" class="chip" data-tag="@tag.ToLowerInvariant()" aria-pressed="false">@tag</button>
+            }
+        </div>
+        <label class="visually-hidden" for="project-search">Search projects</label>
+        <input id="project-search" class="search" type="search" placeholder="Search projects" autocomplete="off" />
+    </div>
+    <p id="filter-status" class="visually-hidden" role="status" aria-live="polite"></p>
+
+    @await Html.PartialAsync("_ProjectSection", (Title: "Flagship ML", Id: "flagship", Projects: Model.Flagship))
+    @await Html.PartialAsync("_ProjectSection", (Title: "Model Zoo", Id: "zoo", Projects: Model.Zoo))
+
+    <p id="no-results" class="empty-state" hidden>No projects match your filter.</p>
+</section>
+
+@section Scripts {
+    <script src="~/js/home.js" asp-append-version="true"></script>
+}

@@ -8,7 +8,7 @@
 
 A personal ML portfolio website that showcases:
 
-1. **Finance & Fintech ML projects** (stock market focus, e.g. NSE regime classifier).
+1. **Flagship ML projects**: in-depth showcase projects, currently finance/stock-market focused (e.g. NSE regime classifier) but open to any domain.
 2. **Model Zoo**: one example project per popular ML model (synthetic or real data).
 
 Each project is a card on the homepage. Clicking a card opens a project page with a summary, visualizations exported from the notebook, an input form that returns live model output, and a link to the GitHub repo containing notebooks/code.
@@ -67,10 +67,13 @@ All code lives in this single repo initially. To keep any project extractable in
 
 ### 4.1 Homepage (`/`)
 - Hero section: name, one-line positioning, links (GitHub, LinkedIn, Twitter).
-- Two sections: **Finance & Fintech ML** and **Model Zoo**.
+- Two sections: **Flagship ML** and **Model Zoo**.
 - Responsive card grid. Each card shows: title, one-line summary, tags, status badge (Live / Notebook only / Coming soon), thumbnail chart.
 - Tag filter chips and text search (client-side).
-- Card click navigates to `/projects/{slug}`.
+- Card click navigates to `/projects/{slug}` (404 until Phase 2 builds the project page).
+- Owner name, tagline, description and GitHub/LinkedIn URLs come from the `Site` section of `appsettings.json`; a social link is rendered only when its URL is set. Twitter is not included yet.
+- Filters: one tag chip active at a time plus a text search over title, summary and tags; a section hides when it has no visible cards, and an empty state shows when nothing matches.
+- Catalog entries stay `coming-soon` until their project is actually built, so a "Live" badge never points at a missing page.
 
 ### 4.2 Project page (`/projects/{slug}`)
 Sections in order:
@@ -79,7 +82,7 @@ Sections in order:
 3. **Visualizations:** gallery of charts from `wwwroot/projects/<slug>/charts/` (PNG/SVG, or Plotly JSON for interactive charts). Captions come from `projects.json`.
 4. **Try the model:** form generated from `schema.json`; result panel shows prediction, probabilities/confidence, and a short interpretation string.
 5. **Links:** GitHub repo, notebook (nbviewer/GitHub), related projects.
-6. **Disclaimer** (Finance projects): "Educational purposes only. Not investment advice."
+6. **Disclaimer** (projects with `"disclaimer": "finance"` in `projects.json`, independent of category): "Educational purposes only. Not investment advice."
 
 Unknown slug returns a styled 404.
 
@@ -97,7 +100,8 @@ Unknown slug returns a styled 404.
 {
   "slug": "nse-regime",
   "title": "NSE Market Regime Classifier",
-  "category": "finance",
+  "category": "flagship",
+  "disclaimer": "finance",
   "summary": "Classifies NIFTY market regimes using trend and volatility features.",
   "tags": ["classification", "time series", "NSE"],
   "status": "live",
@@ -146,6 +150,7 @@ Presets render as one-click example buttons above the form.
 - Cards with hover lift, clear tag chips, thumbnails with consistent aspect ratio.
 - Charts share one style (palette, fonts, sizes) across all projects. Export at 2x for crispness.
 - UI library: **Bootstrap 5** (decided), with custom CSS variables for theming (light/dark).
+- Visual direction: **"Editorial minimal"** (decided): warm off-white background, Georgia serif for headings, system sans for body, thin borders, a single indigo accent. Tokens live in `wwwroot/css/site.css`. Theme is set from `localStorage` or `prefers-color-scheme` before first paint.
 
 ## 7. Technology
 
@@ -158,7 +163,7 @@ Presets render as one-click example buttons above the form.
 
 > **v1 scope:** two pilot Model Zoo projects are built end to end (logistic regression, linear regression). Flagships (marked ⭐ below) appear as **Coming soon** placeholder cards until their phase starts. All other projects are backlog.
 
-### Finance & Fintech
+### Flagship ML (current backlog is finance/fintech; other domains welcome)
 1. ⭐ NSE market regime classifier (flagship; NIFTY universe), placeholder in v1
 2. Volatility forecasting (GARCH/ML comparison)
 3. Next-day return direction classifier
@@ -181,7 +186,7 @@ Each project's data is synthetic or openly licensed; the data source is stated o
 - [ ] `content/<slug>.md` written (problem, data, approach, results, limitations).
 - [ ] Entry added to `projects.json`.
 - [ ] Parity test added: .NET output equals Python output on 5+ reference inputs.
-- [ ] Finance projects carry the disclaimer.
+- [ ] Projects with `"disclaimer": "finance"` carry the disclaimer.
 - [ ] GitHub repo link and notebook link verified.
 
 ## 10. Testing Strategy
@@ -196,12 +201,12 @@ Each project's data is synthetic or openly licensed; the data source is stated o
 | Phase | Scope | Estimate (part-time) |
 |---|---|---|
 | 0 | Solution scaffold, repo, `.gitignore`, theme decision | 0.5 day |
-| 1 | Catalog service, homepage, shared layout, themes | 1 day |
+| 1 | Catalog service, homepage, shared layout, themes | 1 day ✅ done |
 | 2 | Generic project page, Markdown content, chart gallery, dynamic form from schema | 1–2 days |
 | 3 | Two pilot Model Zoo projects end to end (logistic regression, linear regression), `PredictController`, parity tests | 2–3 days |
 | 3b | Flagship placeholders: "Coming soon" cards and pages (`status: "coming-soon"`, `inferenceMode: "none"`) for the NSE regime classifier and other flagships | 0.5 day |
 | 4 | Flagship: NSE regime classifier (replaces its placeholder) | 3–5 days |
-| 5 | Remaining Finance and Model Zoo projects (repeat checklist) | ongoing |
+| 5 | Remaining Flagship and Model Zoo projects (repeat checklist) | ongoing |
 | 6 | Dockerfile/CI, rate limiting, OpenGraph; deployment and custom domain once hosting is chosen | 1 day |
 
 ## 12. Risks and Mitigations

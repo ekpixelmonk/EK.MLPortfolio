@@ -1,0 +1,36 @@
+[
+  {
+    "slug": "nse-regime",
+    "title": "NSE Market Regime Classifier",
+    "category": "flagship",
+    "summary": "Classifies NIFTY market regimes using trend and volatility features.",
+    "tags": ["classification", "time series", "NSE"],
+    "status": "coming-soon",
+    "inferenceMode": "none",
+    "disclaimer": "finance",
+    "thumbnail": "charts/thumbnail.svg",
+    "order": 1
+  },
+  {
+    "slug": "logistic-regression",
+    "title": "Logistic Regression",
+    "category": "zoo",
+    "summary": "Predicts a binary outcome from numeric features and returns class probabilities.",
+    "tags": ["classification", "linear models"],
+    "status": "coming-soon",
+    "inferenceMode": "onnx",
+    "thumbnail": "charts/thumbnail.svg",
+    "order": 1
+  },
+  {
+    "slug": "linear-regression",
+    "title": "Linear Regression",
+    "category": "zoo",
+    "summary": "Fits a straight line to numeric data and predicts a continuous value.",
+    "tags": ["regression", "linear models"],
+    "status": "coming-soon",
+    "inferenceMode": "onnx",
+    "thumbnail": "charts/thumbnail.svg",
+    "order": 2
+  }
+]
