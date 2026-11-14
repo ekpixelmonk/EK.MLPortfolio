@@ -29,6 +29,7 @@
             document.documentElement.setAttribute("data-bs-theme", theme);
         })();
     </script>
+    <link rel="icon" href="~/favicon.ico" sizes="any" asp-append-version="true" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
@@ -37,7 +38,10 @@
 
     <header class="site-header">
         <div class="container d-flex flex-wrap align-items-center justify-content-between gap-2 py-3">
-            <a class="site-brand" asp-controller="Home" asp-action="Index">@site.OwnerName</a>
+            <a class="site-brand" asp-controller="Home" asp-action="Index">
+                <img class="site-logo" src="~/icon.svg" asp-append-version="true" alt="" width="32" height="32" />
+                <span>@site.OwnerName</span>
+            </a>
             <nav aria-label="Primary" class="d-flex align-items-center gap-3">
                 <a class="site-link" asp-controller="Home" asp-action="Index" asp-fragment="projects">Projects</a>
                 <partial name="_SocialLinks" />

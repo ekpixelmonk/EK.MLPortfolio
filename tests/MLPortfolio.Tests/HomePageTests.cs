@@ -104,6 +104,27 @@ public class HomePageTests(WebApplicationFactory<Program> factory) : IClassFixtu
     }
 
     [Fact]
+    public async Task Layout_ShowsLogoBesideTheNameAndLinksTheFavicon()
+    {
+        var html = await GetHomeAsync();
+
+        var brand = html[html.IndexOf("class=\"site-brand\"", StringComparison.Ordinal)..];
+        Assert.True(brand.IndexOf("class=\"site-logo\"", StringComparison.Ordinal) < brand.IndexOf("E. Kartik", StringComparison.Ordinal),
+            "the logo should come before the name");
+        Assert.Contains("<link rel=\"icon\" href=\"/favicon.ico", html);
+    }
+
+    [Theory]
+    [InlineData("/icon.svg")]
+    [InlineData("/favicon.ico")]
+    public async Task SiteIcons_AreServed(string path)
+    {
+        var response = await _client.GetAsync(path);
+
+        Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Fact]
     public async Task Home_HasThemeToggleAndSkipLink()
     {
         var html = await GetHomeAsync();
