@@ -1,0 +1,74 @@
+[
+  {
+    "input": {
+      "market_return_pct": 2.1,
+      "sector_return_pct": 1.8,
+      "volume_ratio": 1.6
+    },
+    "prediction": 3.1881778409551433
+  },
+  {
+    "input": {
+      "market_return_pct": -3.2,
+      "sector_return_pct": -2.6,
+      "volume_ratio": 2.8
+    },
+    "prediction": -4.418500191885155
+  },
+  {
+    "input": {
+      "market_return_pct": 0.1,
+      "sector_return_pct": 0.0,
+      "volume_ratio": 0.7
+    },
+    "prediction": 0.09554506577974355
+  },
+  {
+    "input": {
+      "market_return_pct": 1.5,
+      "sector_return_pct": -4.6,
+      "volume_ratio": 0.3
+    },
+    "prediction": 0.15815059330155024
+  },
+  {
+    "input": {
+      "market_return_pct": 3.4,
+      "sector_return_pct": 0.9,
+      "volume_ratio": 1.1
+    },
+    "prediction": 4.362352912966244
+  },
+  {
+    "input": {
+      "market_return_pct": 2.5,
+      "sector_return_pct": -2.4,
+      "volume_ratio": 1.8
+    },
+    "prediction": 2.2772713520245706
+  },
+  {
+    "input": {
+      "market_return_pct": -0.5,
+      "sector_return_pct": 4.6,
+      "volume_ratio": 3.6
+    },
+    "prediction": 1.305362752771821
+  },
+  {
+    "input": {
+      "market_return_pct": -2.2,
+      "sector_return_pct": -2.2,
+      "volume_ratio": 1.8
+    },
+    "prediction": -3.2280378977467286
+  },
+  {
+    "input": {
+      "market_return_pct": -5.0,
+      "sector_return_pct": -1.9,
+      "volume_ratio": 3.8
+    },
+    "prediction": -6.187906410965467
+  }
+]

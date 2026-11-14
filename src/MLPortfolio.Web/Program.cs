@@ -1,3 +1,5 @@
+using System.Threading.RateLimiting;
+using MLPortfolio.Web.Controllers;
 using MLPortfolio.Web.Models;
 using MLPortfolio.Web.Services;
 
@@ -12,6 +14,23 @@ builder.Services.AddSingleton<IProjectCatalog>(_ =>
 
 builder.Services.AddSingleton<ISchemaStore, SchemaStore>();
 builder.Services.AddSingleton<IProjectContentStore, ProjectContentStore>();
+builder.Services.AddSingleton<IModelRunner, OnnxModelRunner>();
+
+// Per-client limit on /predict (inference is the only expensive endpoint).
+var predictPermitsPerMinute = builder.Configuration.GetValue("RateLimiting:PredictPermitsPerMinute", 30);
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.AddPolicy(RateLimitPolicies.Predict, context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = predictPermitsPerMinute,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0,
+            }));
+});
 
 var app = builder.Build();
 
@@ -26,6 +45,7 @@ app.UseStatusCodePagesWithReExecute("/error/{0}");
 
 app.UseHttpsRedirection();
 app.UseRouting();
+app.UseRateLimiter();
 
 app.MapStaticAssets();
 

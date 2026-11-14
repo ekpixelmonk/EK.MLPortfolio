@@ -20,6 +20,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Python reference inputs/outputs for the parity tests (written by ml/*/train.py). -->
+    <Content Include="..\fixtures\*.json" Link="fixtures\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\MLPortfolio.Web\MLPortfolio.Web.csproj" />
   </ItemGroup>
 

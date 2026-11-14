@@ -28,7 +28,7 @@ public class ProjectPageTests(WebApplicationFactory<Program> factory) : IClassFi
         Assert.Contains("<h1 class=\"project-page-title\">Logistic Regression</h1>", html);
         Assert.Contains("Summary</h2>", html);
         Assert.Contains(">Problem</h2>", html);   // rendered from content/logistic-regression.md
-        Assert.Contains("Coming soon", html);
+        Assert.Contains("status-live", html);
         Assert.Contains("href=\"/projects/linear-regression\"", html);  // related (shares tag "linear models")
     }
 
@@ -68,22 +68,55 @@ public class ProjectPageTests(WebApplicationFactory<Program> factory) : IClassFi
     }
 
     [Fact]
-    public async Task NotLiveProject_ShowsFormAsDisabledPreview()
+    public async Task LivePilot_ShowsEnabledFormWithPresetsAndCharts()
     {
         var (_, html) = await GetAsync(Client(), "/projects/logistic-regression");
 
         Assert.Contains("Try the model</h2>", html);
-        Assert.Contains("isn't live yet", html);
-        Assert.Contains("name=\"hours_studied\"", html);
-        Assert.Contains("<fieldset class=\"try-fields\" disabled", html);
-        Assert.Contains("Well prepared", html);   // preset button
-        Assert.Contains("<option value=\"weekly\"", html);
+        Assert.DoesNotContain("isn't live yet", html);
+        Assert.DoesNotContain("<fieldset class=\"try-fields\" disabled", html);
+        Assert.Contains("name=\"annual_income_k\"", html);
+        Assert.Contains("Low risk", html);   // preset button
+        Assert.Contains("<option value=\"self-employed\"", html);
+        Assert.Contains("Visualizations</h2>", html);
+        Assert.Contains("/projects/logistic-regression/charts/roc-curve.png", html);
     }
 
     [Fact]
-    public async Task ProjectWithoutSchema_RendersPageWithoutForm()
+    public async Task NumericPilot_ShowsItsOwnForm()
     {
-        var (status, html) = await GetAsync(Client(), "/projects/linear-regression");
+        var (_, html) = await GetAsync(Client(), "/projects/linear-regression");
+
+        Assert.Contains("name=\"market_return_pct\"", html);
+        Assert.Contains("name=\"volume_ratio\"", html);
+        Assert.Contains("Strong market day", html);
+    }
+
+    [Fact]
+    public async Task NotLiveProjectWithSchema_ShowsFormAsDisabledPreview()
+    {
+        var json = """
+            [{ "slug": "logistic-regression", "title": "Logistic Regression", "category": "zoo", "summary": "s",
+               "status": "coming-soon", "inferenceMode": "onnx" }]
+            """;
+        using var custom = WithCatalog(json);
+
+        var (_, html) = await GetAsync(Client(custom), "/projects/logistic-regression");
+
+        Assert.Contains("isn't live yet", html);
+        Assert.Contains("<fieldset class=\"try-fields\" disabled", html);
+    }
+
+    [Fact]
+    public async Task OnnxProjectWithoutSchemaFile_RendersPageWithoutForm()
+    {
+        var json = """
+            [{ "slug": "no-schema", "title": "No Schema", "category": "zoo", "summary": "s",
+               "status": "live", "inferenceMode": "onnx" }]
+            """;
+        using var custom = WithCatalog(json);
+
+        var (status, html) = await GetAsync(Client(custom), "/projects/no-schema");
 
         Assert.Equal(HttpStatusCode.OK, status);
         Assert.DoesNotContain("Try the model", html);
@@ -100,12 +133,14 @@ public class ProjectPageTests(WebApplicationFactory<Program> factory) : IClassFi
         Assert.Contains("Finance", html);
     }
 
-    [Fact]
-    public async Task NonFinanceProject_HasNoDisclaimer()
+    [Theory]
+    [InlineData("logistic-regression")]
+    [InlineData("linear-regression")]
+    public async Task FinancePilots_ShowDisclaimer(string slug)
     {
-        var (_, html) = await GetAsync(Client(), "/projects/logistic-regression");
+        var (_, html) = await GetAsync(Client(), "/projects/" + slug);
 
-        Assert.DoesNotContain("Not investment advice", html);
+        Assert.Contains("Educational purposes only. Not investment advice.", html);
     }
 
     private WebApplicationFactory<Program> WithCatalog(string json) =>
@@ -119,7 +154,7 @@ public class ProjectPageTests(WebApplicationFactory<Program> factory) : IClassFi
             [{ "slug": "logistic-regression", "title": "Logistic Regression", "category": "zoo", "summary": "s",
                "tags": ["classification"], "status": "live", "inferenceMode": "onnx",
                "repoUrl": "https://example.com/repo", "notebookUrl": "https://example.com/nb",
-               "charts": [{ "file": "thumbnail.svg", "caption": "Decision curve" }] }]
+               "charts": [{ "file": "roc-curve.png", "caption": "Decision curve" }] }]
             """;
         using var custom = WithCatalog(json);
 
@@ -149,6 +184,7 @@ public class ProjectPageTests(WebApplicationFactory<Program> factory) : IClassFi
         Assert.Equal(HttpStatusCode.OK, status);
         Assert.Contains("hasn't been published yet", html);
         Assert.DoesNotContain("Visualizations", html);
+        Assert.DoesNotContain("Not investment advice", html);   // no disclaimer unless the project sets one
     }
 
     [Fact]

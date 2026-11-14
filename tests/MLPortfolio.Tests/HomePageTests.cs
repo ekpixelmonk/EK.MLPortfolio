@@ -100,7 +100,9 @@ public class HomePageTests(WebApplicationFactory<Program> factory) : IClassFixtu
     [InlineData("/css/site.css")]
     [InlineData("/js/site.js")]
     [InlineData("/js/home.js")]
-    [InlineData("/projects/logistic-regression/charts/thumbnail.svg")]
+    [InlineData("/projects/logistic-regression/charts/thumbnail.png")]
+    [InlineData("/projects/linear-regression/charts/thumbnail.png")]
+    [InlineData("/projects/nse-regime/charts/thumbnail.svg")]
     public async Task StaticAssets_AreServed(string path)
     {
         var response = await _client.GetAsync(path);

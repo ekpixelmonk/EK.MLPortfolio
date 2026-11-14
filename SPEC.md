@@ -98,7 +98,15 @@ Implementation notes (Phase 2):
 - Request: JSON object of field name → value.
 - Validation against `schema.json` (type, min, max, allowed options, required). Invalid input returns 400 with per-field errors.
 - Response: `{ prediction, label?, probabilities?, explanation?, modelVersion }`, where `probabilities` is an object mapping each label to a value between 0 and 1. A 400 body is `{ "errors": { "<field>": "message" } }`. The page script (`wwwroot/js/project.js`) already expects these shapes.
-- Projects with `inferenceMode: "lookup"` resolve against `lookup.json` (precomputed outputs) instead of ONNX.
+- Projects with `inferenceMode: "lookup"` resolve against `lookup.json` (precomputed outputs) instead of ONNX. *(Not implemented yet; arrives with the first project that needs it.)*
+
+Implementation notes (Phase 3):
+- Only projects that are `live` with `inferenceMode: "onnx"` and a valid schema are served. Anything else returns **404** with a JSON body `{ "error": "..." }` (not the HTML 404 page).
+- **ONNX input convention** (shared with the Python training code): one ONNX input per schema input, named after it, shape `[1,1]`: `float` for `number`, `string` for `select`. Classifiers output a label and a probability tensor (ZipMap disabled); regressors output one float.
+- For classification, `prediction` is the class index and `label` the class name. For regression, `prediction` is the value (4 decimals) and `label` is a display string such as `"+3.19%"` using the schema's `outputs.unit`.
+- Unknown fields are rejected; missing required fields are errors; optional fields fall back to their schema default.
+- A missing or broken model returns **503** `{ "error": "..." }` with no internal detail. Request bodies are limited to 16 KB and `/predict` is rate-limited per client IP (default 30 per minute, `RateLimiting:PredictPermitsPerMinute`); over the limit returns **429**.
+- Logging records slug, outcome and latency only, never input values.
 - Projects with `inferenceMode: "none"` hide the form.
 
 ### 4.4 Metadata-driven configuration
@@ -181,6 +189,8 @@ Presets render as one-click example buttons above the form.
 6. Portfolio optimization demo (mean-variance with ML-estimated returns)
 
 ### Model Zoo (one per model)
+Pilots (built): **Logistic regression** (borrower default, synthetic) and **Linear regression** (stock return vs market, synthetic). Both are finance-flavoured by design but are not labelled as finance projects; they carry the finance disclaimer. Full list:
+
 Linear regression · Logistic regression · Decision tree · Random forest · Gradient boosting (XGBoost) · SVM · KNN · Naive Bayes · k-means · PCA · Gaussian mixture / DBSCAN · Small neural network (MLP) · Time-series model (ARIMA/Prophet-style or LSTM)
 
 Each project's data is synthetic or openly licensed; the data source is stated on the page.
@@ -212,8 +222,8 @@ Each project's data is synthetic or openly licensed; the data source is stated o
 | 0 | Solution scaffold, repo, `.gitignore`, theme decision | 0.5 day |
 | 1 | Catalog service, homepage, shared layout, themes | 1 day ✅ done |
 | 2 | Generic project page, Markdown content, chart gallery, dynamic form from schema | 1–2 days ✅ done |
-| 3 | Two pilot Model Zoo projects end to end (logistic regression, linear regression), `PredictController`, parity tests | 2–3 days |
-| 3b | Flagship placeholders: "Coming soon" cards and pages (`status: "coming-soon"`, `inferenceMode: "none"`) for the NSE regime classifier and other flagships | 0.5 day |
+| 3 | Two pilot Model Zoo projects end to end (logistic regression, linear regression), `PredictController`, parity tests | 2–3 days ✅ done |
+| 3b | Flagship placeholders: "Coming soon" cards and pages (`status: "coming-soon"`, `inferenceMode: "none"`) for the NSE regime classifier and other flagships | 0.5 day ✅ done (delivered in Phases 1–2) |
 | 4 | Flagship: NSE regime classifier (replaces its placeholder) | 3–5 days |
 | 5 | Remaining Flagship and Model Zoo projects (repeat checklist) | ongoing |
 | 6 | Dockerfile/CI, rate limiting, OpenGraph; deployment and custom domain once hosting is chosen | 1 day |

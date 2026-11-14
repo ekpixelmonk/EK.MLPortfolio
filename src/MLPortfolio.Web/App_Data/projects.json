@@ -16,22 +16,36 @@
     "slug": "logistic-regression",
     "title": "Logistic Regression",
     "category": "zoo",
-    "summary": "Predicts a binary outcome from numeric features and returns class probabilities.",
-    "tags": ["classification", "linear models"],
-    "status": "coming-soon",
+    "summary": "Estimates the probability that a borrower defaults and classifies them as likely to repay or default.",
+    "tags": ["classification", "linear models", "credit risk"],
+    "status": "live",
     "inferenceMode": "onnx",
-    "thumbnail": "charts/thumbnail.svg",
+    "disclaimer": "finance",
+    "thumbnail": "charts/thumbnail.png",
+    "charts": [
+      { "file": "roc-curve.png", "caption": "ROC curve on held-out data: how well the model ranks risky borrowers above safe ones." },
+      { "file": "confusion-matrix.png", "caption": "Confusion matrix on held-out data at a 0.5 probability threshold." },
+      { "file": "coefficients.png", "caption": "Learned coefficients: positive values push the prediction toward default." },
+      { "file": "calibration.png", "caption": "Calibration: predicted probabilities against the default rate actually observed." }
+    ],
     "order": 1
   },
   {
     "slug": "linear-regression",
     "title": "Linear Regression",
     "category": "zoo",
-    "summary": "Fits a straight line to numeric data and predicts a continuous value.",
-    "tags": ["regression", "linear models"],
-    "status": "coming-soon",
+    "summary": "Predicts a stock's daily return from the market's move, its sector's move and trading volume.",
+    "tags": ["regression", "linear models", "stock returns"],
+    "status": "live",
     "inferenceMode": "onnx",
-    "thumbnail": "charts/thumbnail.svg",
+    "disclaimer": "finance",
+    "thumbnail": "charts/thumbnail.png",
+    "charts": [
+      { "file": "predicted-vs-actual.png", "caption": "Predicted against actual daily returns on held-out data." },
+      { "file": "residuals.png", "caption": "Residuals show no pattern, which suggests a straight line is a reasonable fit." },
+      { "file": "coefficients.png", "caption": "Learned coefficients: the market return coefficient is the stock's beta." },
+      { "file": "residual-distribution.png", "caption": "Residuals are roughly bell-shaped and centred on zero." }
+    ],
     "order": 2
   }
 ]

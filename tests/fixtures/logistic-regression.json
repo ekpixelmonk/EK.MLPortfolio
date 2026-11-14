@@ -1,0 +1,114 @@
+[
+  {
+    "input": {
+      "annual_income_k": 120.0,
+      "debt_to_income_pct": 15.0,
+      "credit_history_years": 15.0,
+      "late_payments_12m": 0.0,
+      "employment": "salaried"
+    },
+    "label": "Repaid",
+    "probabilities": {
+      "Repaid": 0.9839908457827433,
+      "Default": 0.01600915421725668
+    }
+  },
+  {
+    "input": {
+      "annual_income_k": 28.0,
+      "debt_to_income_pct": 62.0,
+      "credit_history_years": 2.0,
+      "late_payments_12m": 5.0,
+      "employment": "unemployed"
+    },
+    "label": "Default",
+    "probabilities": {
+      "Repaid": 0.02125843972639674,
+      "Default": 0.9787415602736033
+    }
+  },
+  {
+    "input": {
+      "annual_income_k": 157.0,
+      "debt_to_income_pct": 52.0,
+      "credit_history_years": 16.0,
+      "late_payments_12m": 0.0,
+      "employment": "self-employed"
+    },
+    "label": "Repaid",
+    "probabilities": {
+      "Repaid": 0.8597065501611669,
+      "Default": 0.1402934498388331
+    }
+  },
+  {
+    "input": {
+      "annual_income_k": 15.0,
+      "debt_to_income_pct": 22.0,
+      "credit_history_years": 34.0,
+      "late_payments_12m": 6.0,
+      "employment": "self-employed"
+    },
+    "label": "Repaid",
+    "probabilities": {
+      "Repaid": 0.7306623665367196,
+      "Default": 0.2693376334632805
+    }
+  },
+  {
+    "input": {
+      "annual_income_k": 290.0,
+      "debt_to_income_pct": 18.0,
+      "credit_history_years": 34.0,
+      "late_payments_12m": 9.0,
+      "employment": "self-employed"
+    },
+    "label": "Repaid",
+    "probabilities": {
+      "Repaid": 0.906961688343505,
+      "Default": 0.09303831165649495
+    }
+  },
+  {
+    "input": {
+      "annual_income_k": 86.0,
+      "debt_to_income_pct": 22.0,
+      "credit_history_years": 17.0,
+      "late_payments_12m": 8.0,
+      "employment": "self-employed"
+    },
+    "label": "Default",
+    "probabilities": {
+      "Repaid": 0.38371347489822605,
+      "Default": 0.616286525101774
+    }
+  },
+  {
+    "input": {
+      "annual_income_k": 52.0,
+      "debt_to_income_pct": 77.0,
+      "credit_history_years": 15.0,
+      "late_payments_12m": 11.0,
+      "employment": "salaried"
+    },
+    "label": "Default",
+    "probabilities": {
+      "Repaid": 0.006648821935686722,
+      "Default": 0.9933511780643133
+    }
+  },
+  {
+    "input": {
+      "annual_income_k": 91.0,
+      "debt_to_income_pct": 62.0,
+      "credit_history_years": 11.0,
+      "late_payments_12m": 11.0,
+      "employment": "self-employed"
+    },
+    "label": "Default",
+    "probabilities": {
+      "Repaid": 0.010391527249767996,
+      "Default": 0.989608472750232
+    }
+  }
+]
