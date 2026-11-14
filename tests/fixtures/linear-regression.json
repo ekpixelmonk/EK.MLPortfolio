@@ -2,73 +2,64 @@
   {
     "input": {
       "market_return_pct": 2.1,
-      "sector_return_pct": 1.8,
       "volume_ratio": 1.6
     },
-    "prediction": 2.2479860629929127
+    "prediction": 2.5441624782126513
   },
   {
     "input": {
       "market_return_pct": -3.2,
-      "sector_return_pct": -2.6,
       "volume_ratio": 2.8
     },
-    "prediction": -2.2677054205402185
+    "prediction": -2.587445599198699
   },
   {
     "input": {
       "market_return_pct": 0.1,
-      "sector_return_pct": 0.0,
       "volume_ratio": 0.7
     },
-    "prediction": -0.0874698833907671
+    "prediction": 0.005441880991112494
   },
   {
     "input": {
       "market_return_pct": 1.5,
-      "sector_return_pct": -4.6,
-      "volume_ratio": 0.3
+      "volume_ratio": 0.4
     },
-    "prediction": -4.988588477977809
+    "prediction": 1.3685208039667123
   },
   {
     "input": {
-      "market_return_pct": 3.4,
-      "sector_return_pct": 0.9,
+      "market_return_pct": -4.8,
+      "volume_ratio": 3.4
+    },
+    "prediction": -4.030772987185704
+  },
+  {
+    "input": {
+      "market_return_pct": 0.9,
       "volume_ratio": 1.1
     },
-    "prediction": 1.1989969661654252
+    "prediction": 1.0387376680551894
   },
   {
     "input": {
       "market_return_pct": 2.5,
-      "sector_return_pct": -2.4,
-      "volume_ratio": 1.8
+      "volume_ratio": 1.2
     },
-    "prediction": -2.0767080662333757
+    "prediction": 2.7936971491127682
   },
   {
     "input": {
-      "market_return_pct": -0.5,
-      "sector_return_pct": 4.6,
+      "market_return_pct": -0.8,
+      "volume_ratio": 1.9
+    },
+    "prediction": -0.4224545172181913
+  },
+  {
+    "input": {
+      "market_return_pct": 4.6,
       "volume_ratio": 3.6
     },
-    "prediction": 5.756490189125063
-  },
-  {
-    "input": {
-      "market_return_pct": -2.2,
-      "sector_return_pct": -2.2,
-      "volume_ratio": 1.8
-    },
-    "prediction": -2.1454592535243573
-  },
-  {
-    "input": {
-      "market_return_pct": -5.0,
-      "sector_return_pct": -1.9,
-      "volume_ratio": 3.8
-    },
-    "prediction": -1.2798394072206611
+    "prediction": 6.107103341077792
   }
 ]

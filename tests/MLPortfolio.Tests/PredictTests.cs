@@ -130,14 +130,14 @@ public class PredictTests : IClassFixture<WebApplicationFactory<Program>>
     [Fact]
     public async Task Regression_ReturnsFormattedLabelWithUnit()
     {
-        var json = """{ "market_return_pct": 2.1, "sector_return_pct": 1.8, "volume_ratio": 1.6 }""";
+        var json = """{ "market_return_pct": 2.1, "volume_ratio": 1.6 }""";
 
         var response = await _factory.CreateClient().PostAsync("/predict/linear-regression", Json(json));
         var body = await response.Content.ReadFromJsonAsync<JsonElement>();
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.Equal(2.248, body.GetProperty("prediction").GetDouble(), precision: 2);
-        Assert.Equal("+2.25%", body.GetProperty("label").GetString());
+        Assert.Equal(2.5442, body.GetProperty("prediction").GetDouble(), precision: 2);
+        Assert.Equal("+2.54%", body.GetProperty("label").GetString());
         Assert.Equal(JsonValueKind.Null, body.GetProperty("probabilities").ValueKind);
     }
 

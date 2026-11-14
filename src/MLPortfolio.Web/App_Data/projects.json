@@ -34,19 +34,19 @@
     "slug": "linear-regression",
     "title": "Linear Regression",
     "category": "zoo",
-    "summary": "Predicts Reliance Industries' daily return from the Nifty 50, the Nifty Energy index and trading volume, using real Yahoo Finance prices.",
+    "summary": "Predicts Reliance Industries' daily return from the Nifty 50's move and trading volume, using real Yahoo Finance prices.",
     "tags": ["regression", "linear models", "stock returns"],
     "status": "live",
     "inferenceMode": "onnx",
     "disclaimer": "finance",
     "thumbnail": "charts/thumbnail.png",
     "charts": [
-      { "file": "price-history.png", "caption": "The three closing-price series from Yahoo Finance, rebased to 100. Reliance has tracked the Nifty 50 with more swing." },
+      { "file": "price-history.png", "caption": "Reliance and Nifty 50 closing prices from Yahoo Finance, rebased to 100. Reliance has tracked the Nifty 50 with more swing." },
       { "file": "outliers.png", "caption": "Daily Reliance return against the Nifty 50 return. Red circles are stock-specific outliers that were kept; orange crosses are crash and election-day moves outside the form's range." },
       { "file": "predicted-vs-actual.png", "caption": "Predicted against actual daily returns on the most recent 25% of days." },
-      { "file": "residuals.png", "caption": "Residuals slope downward: the model over-predicts large moves in the recent period." },
-      { "file": "coefficients.png", "caption": "Learned coefficients: the sector index takes most of the weight because it contains Reliance itself." },
-      { "file": "residual-distribution.png", "caption": "Residuals are centred near zero with a few large stock-specific misses in the tails." }
+      { "file": "residuals.png", "caption": "Residuals show no trend against the prediction, but a few days are missed by 4 to 8 points." },
+      { "file": "coefficients.png", "caption": "Learned coefficients: the market coefficient is the stock's beta; volume adds a small positive effect." },
+      { "file": "residual-distribution.png", "caption": "Residuals are centred near zero with heavy tails: occasional stock-specific days the model cannot see." }
     ],
     "order": 2
   },

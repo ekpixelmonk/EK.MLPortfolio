@@ -14,16 +14,6 @@
     },
     {
       "type": "number",
-      "name": "sector_return_pct",
-      "label": "Sector return today (%)",
-      "min": -5,
-      "max": 5,
-      "step": 0.1,
-      "default": 0.4,
-      "help": "Daily return of the Nifty Energy index"
-    },
-    {
-      "type": "number",
       "name": "volume_ratio",
       "label": "Volume vs 20-day average (x)",
       "min": 0.2,
@@ -42,7 +32,6 @@
       "name": "Strong market day",
       "values": {
         "market_return_pct": 2.1,
-        "sector_return_pct": 1.8,
         "volume_ratio": 1.6
       }
     },
@@ -50,7 +39,6 @@
       "name": "Sell-off",
       "values": {
         "market_return_pct": -3.2,
-        "sector_return_pct": -2.6,
         "volume_ratio": 2.8
       }
     },
@@ -58,7 +46,6 @@
       "name": "Quiet day",
       "values": {
         "market_return_pct": 0.1,
-        "sector_return_pct": 0.0,
         "volume_ratio": 0.7
       }
     }

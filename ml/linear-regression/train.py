@@ -1,4 +1,4 @@
-"""Linear regression: predict Reliance Industries' daily return from the Nifty 50, the Nifty Energy index and volume.
+"""Linear regression: predict Reliance Industries' daily return from the Nifty 50 and volume.
 
 Pipeline: download real prices from Yahoo Finance (cached in data/) -> audit and clean -> chronological split ->
 train sklearn pipeline -> evaluate -> export ONNX -> verify with
@@ -46,7 +46,7 @@ MODEL_VERSION = "1.0.0"
 SEED = 42
 TARGET = "stock_return_pct"
 
-TICKERS = {"stock": "RELIANCE.NS", "market": "^NSEI", "sector": "^CNXENERGY"}  # Reliance, Nifty 50, Nifty Energy
+TICKERS = {"stock": "RELIANCE.NS", "market": "^NSEI"}  # Reliance, Nifty 50
 START_DATE = "2015-01-01"
 DATA_DIR = Path(__file__).resolve().parent / "data"
 RAW_CSV = DATA_DIR / "raw_yahoo.csv"
@@ -57,17 +57,15 @@ OUTLIER_Z = 5.0  # robust z-score of the residual above which a day is flagged
 INPUTS = [
     {"name": "market_return_pct", "label": "Market return today (%)", "min": -5, "max": 5, "step": 0.1, "default": 0.5,
      "help": "Daily return of the Nifty 50"},
-    {"name": "sector_return_pct", "label": "Sector return today (%)", "min": -5, "max": 5, "step": 0.1, "default": 0.4,
-     "help": "Daily return of the Nifty Energy index"},
     {"name": "volume_ratio", "label": "Volume vs 20-day average (x)", "min": 0.2, "max": 4, "step": 0.1, "default": 1.0,
      "help": "1.0 means normal trading volume"},
 ]
 COLUMNS = [i["name"] for i in INPUTS]
 
 PRESETS = [
-    {"name": "Strong market day", "values": {"market_return_pct": 2.1, "sector_return_pct": 1.8, "volume_ratio": 1.6}},
-    {"name": "Sell-off", "values": {"market_return_pct": -3.2, "sector_return_pct": -2.6, "volume_ratio": 2.8}},
-    {"name": "Quiet day", "values": {"market_return_pct": 0.1, "sector_return_pct": 0.0, "volume_ratio": 0.7}},
+    {"name": "Strong market day", "values": {"market_return_pct": 2.1, "volume_ratio": 1.6}},
+    {"name": "Sell-off", "values": {"market_return_pct": -3.2, "volume_ratio": 2.8}},
+    {"name": "Quiet day", "values": {"market_return_pct": 0.1, "volume_ratio": 0.7}},
 ]
 
 
@@ -90,7 +88,7 @@ def _use_system_certificates() -> None:
 
 
 def download_raw() -> pd.DataFrame:
-    """Daily OHLCV for the stock, the market index and the sector index. `Close` is already adjusted by
+    """Daily OHLCV for the stock and the market index. `Close` is already adjusted by
     Yahoo for splits and bonus issues; auto_adjust is off so dividends are not baked into the prices."""
     _use_system_certificates()
     raw = yf.download(list(TICKERS.values()), start=START_DATE, auto_adjust=False, progress=False)
@@ -114,7 +112,7 @@ class Audit:
     counts: dict
     notes: list[str]
     flagged: pd.DataFrame       # kept in the data, but extreme for their inputs
-    out_of_range: pd.DataFrame  # removed: market or sector move beyond the form's +/-5% range
+    out_of_range: pd.DataFrame  # removed: market move beyond the form's +/-5% range
     prices: pd.DataFrame        # aligned closing prices, for the price-history chart
 
 
@@ -146,7 +144,7 @@ def prepare(raw: pd.DataFrame) -> tuple[pd.DataFrame, Audit]:
     returns = aligned.pct_change() * 100
     baseline = volume.shift(1).rolling(VOLUME_WINDOW).mean()  # the 20 previous days, excluding today
     table = pd.DataFrame({
-        "market_return_pct": returns["market"], "sector_return_pct": returns["sector"],
+        "market_return_pct": returns["market"],
         "volume_ratio": volume / baseline, TARGET: returns["stock"],
     }).dropna()
     counts["dropped_warmup"] = int(len(aligned) - len(table))
@@ -157,7 +155,7 @@ def prepare(raw: pd.DataFrame) -> tuple[pd.DataFrame, Audit]:
     table = table[~stale]
 
     # 5. Match the form's domain. Volume is capped at the form's range (a 9x day still means "very busy"),
-    #    but a market or sector move beyond +/-5% is dropped: it is a crash or election-day regime the form
+    #    but a market move beyond +/-5% is dropped: it is a crash or election-day regime the form
     #    does not accept, and one such day would dominate a least-squares fit.
     vol = next(i for i in INPUTS if i["name"] == "volume_ratio")
     counts["volume_capped"] = int(((table["volume_ratio"] < vol["min"]) | (table["volume_ratio"] > vol["max"])).sum())
@@ -170,7 +168,7 @@ def prepare(raw: pd.DataFrame) -> tuple[pd.DataFrame, Audit]:
     table = table[~outside]
     counts["dropped_out_of_range"] = int(len(out_of_range))
     notes.append(f"{counts['volume_capped']} days had volume outside 0.2-4x the average and were capped")
-    notes.append(f"{len(out_of_range)} days dropped for a market or sector move beyond +/-5%")
+    notes.append(f"{len(out_of_range)} days dropped for a market move beyond +/-5%")
 
     # 6. Outliers that stay: a robust z-score of the residual from a plain market-only fit. A big residual
     #    is a real stock-specific event, so it is flagged, reported and kept rather than silently deleted.
@@ -317,7 +315,7 @@ def make_charts(result: Result, out_dir: Path) -> list[dict]:
     prices = result.audit.prices
     rebased = prices / prices.iloc[0] * 100
     fig, ax = plt.subplots(figsize=(7.5, 4.2))
-    for col, label, colour in [("stock", "Reliance", ACCENT), ("market", "Nifty 50", MUTED), ("sector", "Nifty Energy", "#d97706")]:
+    for col, label, colour in [("stock", "Reliance", ACCENT), ("market", "Nifty 50", MUTED)]:
         ax.plot(rebased.index, rebased[col], label=label, color=colour, linewidth=1.4)
     ax.set_yscale("log")
     ax.set_yticks([100, 200, 400, 800])
@@ -326,7 +324,7 @@ def make_charts(result: Result, out_dir: Path) -> list[dict]:
     ax.set_ylabel("Rebased to 100 (log scale)")
     ax.set_title(f"Closing prices, {prices.index.min().year} to {prices.index.max().year}")
     ax.legend(loc="upper left")
-    save(fig, "price-history.png", "The three closing-price series from Yahoo Finance, rebased to 100. Reliance has tracked the Nifty 50 with more swing.")
+    save(fig, "price-history.png", "Reliance and Nifty 50 closing prices from Yahoo Finance, rebased to 100. Reliance has tracked the Nifty 50 with more swing.")
 
     data, audit = result.data, result.audit
     fig, ax = plt.subplots(figsize=(6.5, 5))
@@ -361,24 +359,24 @@ def make_charts(result: Result, out_dir: Path) -> list[dict]:
     ax.set_xlabel("Predicted return (%)")
     ax.set_ylabel("Residual (%)")
     ax.set_title("Residuals vs predicted")
-    save(fig, "residuals.png", "Residuals slope downward: the model over-predicts large moves in the recent period.")
+    save(fig, "residuals.png", "Residuals show no trend against the prediction, but a few days are missed by 4 to 8 points.")
 
     scaler = result.pipeline.named_steps["pre"].named_transformers_["num"]
     per_unit = result.pipeline.named_steps["reg"].coef_ / scaler.scale_
-    labels = ["Market return (%)", "Sector return (%)", "Volume ratio (x)"]
+    labels = ["Market return (%)", "Volume ratio (x)"]
     fig, ax = plt.subplots(figsize=(6.5, 3.8))
     ax.barh(labels, per_unit, color=ACCENT)
     ax.axvline(0, color=MUTED, linewidth=0.8)
     ax.set_xlabel("Change in predicted return (%) per 1-unit increase")
     ax.set_title("Coefficients (original units)")
-    save(fig, "coefficients.png", "Learned coefficients: the sector index takes most of the weight because it contains Reliance itself.")
+    save(fig, "coefficients.png", "Learned coefficients: the market coefficient is the stock's beta; volume adds a small positive effect.")
 
     fig, ax = plt.subplots(figsize=(6, 4.2))
     ax.hist(resid, bins=30, color=ACCENT, alpha=0.8)
     ax.set_xlabel("Residual (%)")
     ax.set_ylabel("Days")
     ax.set_title(f"Residual distribution (RMSE {result.metrics['rmse']:.2f}%)")
-    save(fig, "residual-distribution.png", "Residuals are centred near zero with a few large stock-specific misses in the tails.")
+    save(fig, "residual-distribution.png", "Residuals are centred near zero with heavy tails: occasional stock-specific days the model cannot see.")
 
     shutil.copyfile(out_dir / "predicted-vs-actual.png", out_dir / "thumbnail.png")
     return charts

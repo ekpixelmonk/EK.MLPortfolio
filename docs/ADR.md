@@ -226,12 +226,13 @@ Living technical record for ML Portfolio. Companion to [SPEC.md](../SPEC.md): th
 - **Status:** accepted.
 - **Context:** The linear-regression pilot used synthetic data with a built-in beta. It should show a real workflow: download, check for missing data and outliers, then model.
 - **Decision:**
-  - Data: Yahoo Finance via `yfinance`: `RELIANCE.NS` (target), `^NSEI` (market) and `^CNXENERGY` (sector), daily from 2015-01-01. Price returns use `Close`, which Yahoo already adjusts for bonus issues; the form's three inputs and `schema.json` are unchanged.
+  - Data: Yahoo Finance via `yfinance`: `RELIANCE.NS` (target) and `^NSEI` (market), daily from 2015-01-01. Price returns use `Close`, which Yahoo already adjusts for bonus issues. Inputs are the market return and the volume ratio (the form lost its sector field; see below).
   - The raw CSV is cached in git-ignored `ml/linear-regression/data/` because Yahoo's terms do not allow redistributing its data. `train.py` downloads it when missing; `--refresh` forces a new download. The notebook and the committed charts, model and fixtures are derived artefacts.
-  - Cleaning (`prepare()`): drop days where any series has no close (never forward-fill, which would invent zero returns); drop zero-volume and stale flat days; compute returns after alignment; cap volume ratio to the form's 0.2 to 4x; drop days with a market or sector move beyond +/-5% (crash and election days outside the form's range); flag but keep stock-specific outliers (robust z of the residual above 5), since they are real events. Counts are printed, charted and written up.
+  - Cleaning (`prepare()`): drop days where any series has no close (never forward-fill, which would invent zero returns); drop zero-volume and stale flat days; compute returns after alignment; cap volume ratio to the form's 0.2 to 4x; drop days with a market move beyond +/-5% (crash and election days outside the form's range); flag but keep stock-specific outliers (robust z of the residual above 5), since they are real events. Counts are printed, charted and written up.
   - Chronological split (earlier 75% train, latest 25% test) instead of a random one.
   - On Windows the yfinance HTTP client ignores the system certificate store, so `train.py` builds a CA bundle from it (verification stays on).
-- **Consequences:** The honest result is weaker than the synthetic one: test R2 0.32, below a market-only fit (0.41, beta about 1.02). The Nifty Energy index contains Reliance, so it partly echoes the target, and its weight on Reliance has shrunk over time, so the earlier-years fit over-predicts recent big moves. The write-up says so. Not done: replacing the sector input with one that excludes Reliance, or dropping it (would change the form); a reasonable follow-up.
+  - The sector input (Nifty Energy, `^CNXENERGY`) was tried first and dropped. The index is dominated by Reliance, so its return partly echoes the target (R2 0.62 on its own in training), and its coefficient drifted from 1.43 (2016-17) to 0.36 (2024-25) as weights were capped. Test R2 was 0.32, below a market-only fit (0.41).
+- **Consequences:** With market and volume only, test R2 is 0.42 (RMSE 1.06 vs 1.39 for the mean), beta about 1.07 and stable across two-year windows (0.9 to 1.2). Volume adds almost nothing (market-only 0.42). The form has two inputs; presets, schema and fixtures were regenerated. Residuals are heavy-tailed (stock-specific days), which a market-only linear model cannot explain.
 
 ## Phase Log
 
@@ -355,8 +356,9 @@ Record what was actually built, deviations from the spec, gotchas and follow-ups
 
 #### Linear regression on real data (complete)
 
-- **Built:** `train.py` downloads and caches Reliance, Nifty 50 and Nifty Energy prices, audits and cleans them (`prepare()`), splits chronologically, and adds a price-history and an outlier chart; new write-up, README and executed notebook (audit, feature comparison, coefficient drift). Catalog entry updated. Model, schema and fixtures regenerated; ONNX matches scikit-learn to 4.5e-07. See ADR-025.
-- **Numbers:** 2,930 raw days to 2,862 used (25 missing index closes, 1 zero volume, 1 stale, 20 warm-up, 21 beyond +/-5%; 21 volume caps; 17 outliers flagged and kept). Test R2 0.32, RMSE 1.12 against 1.36 for the mean; market-only R2 0.41.
+- **Built:** `train.py` downloads and caches Reliance and Nifty 50 prices, audits and cleans them (`prepare()`), splits chronologically, and adds a price-history and an outlier chart; new write-up, README and executed notebook (audit, feature comparison, coefficient drift). Catalog entry updated. Model, schema and fixtures regenerated; ONNX matches scikit-learn to 4.5e-07. See ADR-025.
+- **Numbers:** 2,930 raw days to 2,888 used (9 missing index closes, 1 zero volume, 1 stale, 20 warm-up, 11 beyond +/-5%; 21 volume caps; 19 outliers flagged and kept). Test R2 0.42, RMSE 1.06 against 1.39 for the mean; market-only R2 0.42. The sector input was dropped after the first run scored 0.32.
 - **Gotchas:** yfinance (curl_cffi) failed with `CertificateVerifyError` until given a bundle built from the Windows store. A first version dropped every volume above 4x, which removed the highest-signal days; capping is better. Generating the notebook from a script needs care with `
 ` inside f-strings.
-- **Follow-ups:** decide whether to replace or drop the sector input (it overlaps the target); the data cache is local only, so a fresh clone downloads on first run.
+- **Write-up:** ends with a Conclusion (closing statement plus what would improve the model: lagged inputs, a sector index without Reliance, time-varying volatility, event-day handling, more stocks). Other Zoo write-ups do not have one yet.
+- **Follow-ups:** the data cache is local only, so a fresh clone downloads on first run.
