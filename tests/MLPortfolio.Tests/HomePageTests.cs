@@ -41,6 +41,11 @@ public class HomePageTests(WebApplicationFactory<Program> factory) : IClassFixtu
     [InlineData("NSE Market Regime Classifier", "/projects/nse-regime")]
     [InlineData("Logistic Regression", "/projects/logistic-regression")]
     [InlineData("Linear Regression", "/projects/linear-regression")]
+    [InlineData("Decision Tree", "/projects/decision-tree")]
+    [InlineData("Random Forest", "/projects/random-forest")]
+    [InlineData("Support Vector Machine", "/projects/svm")]
+    [InlineData("k-Nearest Neighbours", "/projects/knn")]
+    [InlineData("Naive Bayes", "/projects/naive-bayes")]
     public async Task Home_ListsEachCatalogProjectWithLink(string title, string href)
     {
         var html = await GetHomeAsync();
@@ -102,6 +107,11 @@ public class HomePageTests(WebApplicationFactory<Program> factory) : IClassFixtu
     [InlineData("/js/home.js")]
     [InlineData("/projects/logistic-regression/charts/thumbnail.png")]
     [InlineData("/projects/linear-regression/charts/thumbnail.png")]
+    [InlineData("/projects/decision-tree/charts/thumbnail.png")]
+    [InlineData("/projects/random-forest/charts/thumbnail.png")]
+    [InlineData("/projects/svm/charts/thumbnail.png")]
+    [InlineData("/projects/knn/charts/thumbnail.png")]
+    [InlineData("/projects/naive-bayes/charts/thumbnail.png")]
     [InlineData("/projects/nse-regime/charts/thumbnail.svg")]
     public async Task StaticAssets_AreServed(string path)
     {

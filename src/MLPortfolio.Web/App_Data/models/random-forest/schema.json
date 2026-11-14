@@ -1,0 +1,80 @@
+{
+  "modelFile": "model.onnx",
+  "modelVersion": "1.0.0",
+  "inputs": [
+    {
+      "type": "number",
+      "name": "beta",
+      "label": "Beta (market sensitivity)",
+      "min": 0.2,
+      "max": 2.5,
+      "step": 0.05,
+      "default": 1.0,
+      "help": "How strongly the stock moves with the market"
+    },
+    {
+      "type": "number",
+      "name": "debt_to_equity",
+      "label": "Debt-to-equity ratio",
+      "min": 0,
+      "max": 4,
+      "step": 0.1,
+      "default": 0.8
+    },
+    {
+      "type": "number",
+      "name": "market_cap_bn",
+      "label": "Market cap (billions)",
+      "min": 1,
+      "max": 500,
+      "step": 1,
+      "default": 40
+    },
+    {
+      "type": "select",
+      "name": "sector",
+      "label": "Sector",
+      "options": [
+        "technology",
+        "banks",
+        "utilities",
+        "energy",
+        "healthcare"
+      ],
+      "default": "technology"
+    }
+  ],
+  "outputs": {
+    "type": "regression",
+    "unit": "%"
+  },
+  "presets": [
+    {
+      "name": "Steady utility",
+      "values": {
+        "beta": 0.5,
+        "debt_to_equity": 1.2,
+        "market_cap_bn": 60,
+        "sector": "utilities"
+      }
+    },
+    {
+      "name": "Volatile small-cap tech",
+      "values": {
+        "beta": 1.8,
+        "debt_to_equity": 2.5,
+        "market_cap_bn": 4,
+        "sector": "technology"
+      }
+    },
+    {
+      "name": "Large-cap bank",
+      "values": {
+        "beta": 1.1,
+        "debt_to_equity": 0.9,
+        "market_cap_bn": 220,
+        "sector": "banks"
+      }
+    }
+  ]
+}

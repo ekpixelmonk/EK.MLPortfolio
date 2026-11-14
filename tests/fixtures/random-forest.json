@@ -1,0 +1,83 @@
+[
+  {
+    "input": {
+      "beta": 0.5,
+      "debt_to_equity": 1.2,
+      "market_cap_bn": 60.0,
+      "sector": "utilities"
+    },
+    "prediction": 5.952482899479221
+  },
+  {
+    "input": {
+      "beta": 1.8,
+      "debt_to_equity": 2.5,
+      "market_cap_bn": 4.0,
+      "sector": "technology"
+    },
+    "prediction": 35.98934054203149
+  },
+  {
+    "input": {
+      "beta": 1.1,
+      "debt_to_equity": 0.9,
+      "market_cap_bn": 220.0,
+      "sector": "banks"
+    },
+    "prediction": 17.8263686528987
+  },
+  {
+    "input": {
+      "beta": 1.7000000000000002,
+      "debt_to_equity": 0.2,
+      "market_cap_bn": 11.0,
+      "sector": "banks"
+    },
+    "prediction": 26.095377655413184
+  },
+  {
+    "input": {
+      "beta": 1.55,
+      "debt_to_equity": 0.9,
+      "market_cap_bn": 376.0,
+      "sector": "healthcare"
+    },
+    "prediction": 20.075340802118497
+  },
+  {
+    "input": {
+      "beta": 0.8,
+      "debt_to_equity": 1.7000000000000002,
+      "market_cap_bn": 226.0,
+      "sector": "technology"
+    },
+    "prediction": 18.257494927743537
+  },
+  {
+    "input": {
+      "beta": 2.25,
+      "debt_to_equity": 1.1,
+      "market_cap_bn": 140.0,
+      "sector": "healthcare"
+    },
+    "prediction": 22.511690390112097
+  },
+  {
+    "input": {
+      "beta": 1.1500000000000001,
+      "debt_to_equity": 0.0,
+      "market_cap_bn": 155.0,
+      "sector": "utilities"
+    },
+    "prediction": 9.93259297516023
+  },
+  {
+    "input": {
+      "beta": 2.15,
+      "debt_to_equity": 2.1,
+      "market_cap_bn": 243.0,
+      "sector": "healthcare"
+    },
+    "prediction": 23.525859699012997
+  }
+]

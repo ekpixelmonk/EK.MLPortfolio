@@ -178,7 +178,7 @@ Presets render as one-click example buttons above the form.
 
 ## 8. Project Content Plan
 
-> **v1 scope:** two pilot Model Zoo projects are built end to end (logistic regression, linear regression). Flagships (marked ⭐ below) appear as **Coming soon** placeholder cards until their phase starts. All other projects are backlog.
+> **v1 scope:** seven Model Zoo projects are built end to end (logistic regression, linear regression, decision tree, random forest, SVM, KNN, naive Bayes). Flagships (marked ⭐ below) appear as **Coming soon** placeholder cards until their phase starts. All other projects are backlog.
 
 ### Flagship ML (current backlog is finance/fintech; other domains welcome)
 1. ⭐ NSE market regime classifier (flagship; NIFTY universe), placeholder in v1
@@ -189,7 +189,7 @@ Presets render as one-click example buttons above the form.
 6. Portfolio optimization demo (mean-variance with ML-estimated returns)
 
 ### Model Zoo (one per model)
-Pilots (built): **Logistic regression** (borrower default, synthetic) and **Linear regression** (stock return vs market, synthetic). Both are finance-flavoured by design but are not labelled as finance projects; they carry the finance disclaimer. Full list:
+Built (all live, synthetic data, finance-flavoured but not labelled as finance projects; all carry the finance disclaimer): **Logistic regression** (borrower default), **Linear regression** (stock return vs market), **Decision tree** (loan approval), **Random forest** (stock volatility, regression, compared with a linear baseline), **SVM** (card fraud), **KNN** (stock style: Value / Growth / Income, three classes) and **Naive Bayes** (bank customer churn). Still to do: gradient boosting, k-means, PCA, Gaussian mixture / DBSCAN, MLP, time series. The unsupervised ones need new output types (clusters, projections) in `schema.json`; gradient boosting needs `onnxmltools`. Full list:
 
 Linear regression · Logistic regression · Decision tree · Random forest · Gradient boosting (XGBoost) · SVM · KNN · Naive Bayes · k-means · PCA · Gaussian mixture / DBSCAN · Small neural network (MLP) · Time-series model (ARIMA/Prophet-style or LSTM)
 
@@ -225,7 +225,7 @@ Each project's data is synthetic or openly licensed; the data source is stated o
 | 3 | Two pilot Model Zoo projects end to end (logistic regression, linear regression), `PredictController`, parity tests | 2–3 days ✅ done |
 | 3b | Flagship placeholders: "Coming soon" cards and pages (`status: "coming-soon"`, `inferenceMode: "none"`) for the NSE regime classifier and other flagships | 0.5 day ✅ done (delivered in Phases 1–2) |
 | 4 | Flagship: NSE regime classifier (replaces its placeholder) | 3–5 days |
-| 5 | Remaining Flagship and Model Zoo projects (repeat checklist) | ongoing |
+| 5 | Remaining Flagship and Model Zoo projects (repeat checklist) | ongoing; Zoo batch 1 ✅ done (decision tree, random forest, SVM, KNN, naive Bayes) |
 | 6 | Dockerfile/CI, rate limiting, OpenGraph; deployment and custom domain once hosting is chosen | 1 day |
 
 ## 12. Risks and Mitigations

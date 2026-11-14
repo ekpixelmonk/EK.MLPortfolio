@@ -136,6 +136,11 @@ public class ProjectPageTests(WebApplicationFactory<Program> factory) : IClassFi
     [Theory]
     [InlineData("logistic-regression")]
     [InlineData("linear-regression")]
+    [InlineData("decision-tree")]
+    [InlineData("random-forest")]
+    [InlineData("svm")]
+    [InlineData("knn")]
+    [InlineData("naive-bayes")]
     public async Task FinancePilots_ShowDisclaimer(string slug)
     {
         var (_, html) = await GetAsync(Client(), "/projects/" + slug);

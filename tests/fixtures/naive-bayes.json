@@ -1,0 +1,114 @@
+[
+  {
+    "input": {
+      "age": 45.0,
+      "balance_k": 60.0,
+      "products": 3.0,
+      "tenure_years": 14.0,
+      "active_member": "yes"
+    },
+    "label": "Stays",
+    "probabilities": {
+      "Stays": 0.989611040338589,
+      "Churns": 0.010388959661410409
+    }
+  },
+  {
+    "input": {
+      "age": 58.0,
+      "balance_k": 140.0,
+      "products": 1.0,
+      "tenure_years": 1.0,
+      "active_member": "no"
+    },
+    "label": "Churns",
+    "probabilities": {
+      "Stays": 0.02645642197234406,
+      "Churns": 0.9735435780276552
+    }
+  },
+  {
+    "input": {
+      "age": 65.0,
+      "balance_k": 11.0,
+      "products": 1.0,
+      "tenure_years": 25.0,
+      "active_member": "yes"
+    },
+    "label": "Stays",
+    "probabilities": {
+      "Stays": 0.999107555061606,
+      "Churns": 0.0008924449383955292
+    }
+  },
+  {
+    "input": {
+      "age": 34.0,
+      "balance_k": 188.0,
+      "products": 2.0,
+      "tenure_years": 13.0,
+      "active_member": "no"
+    },
+    "label": "Churns",
+    "probabilities": {
+      "Stays": 0.14357103432697457,
+      "Churns": 0.8564289656730246
+    }
+  },
+  {
+    "input": {
+      "age": 50.0,
+      "balance_k": 239.0,
+      "products": 4.0,
+      "tenure_years": 8.0,
+      "active_member": "no"
+    },
+    "label": "Churns",
+    "probabilities": {
+      "Stays": 0.07069688228456862,
+      "Churns": 0.9293031177154325
+    }
+  },
+  {
+    "input": {
+      "age": 48.0,
+      "balance_k": 1.0,
+      "products": 2.0,
+      "tenure_years": 29.0,
+      "active_member": "yes"
+    },
+    "label": "Stays",
+    "probabilities": {
+      "Stays": 0.9999859756464703,
+      "Churns": 1.4024353529603856e-05
+    }
+  },
+  {
+    "input": {
+      "age": 78.0,
+      "balance_k": 134.0,
+      "products": 2.0,
+      "tenure_years": 28.0,
+      "active_member": "no"
+    },
+    "label": "Stays",
+    "probabilities": {
+      "Stays": 0.9891550456703786,
+      "Churns": 0.010844954329619717
+    }
+  },
+  {
+    "input": {
+      "age": 86.0,
+      "balance_k": 249.0,
+      "products": 1.0,
+      "tenure_years": 4.0,
+      "active_member": "no"
+    },
+    "label": "Churns",
+    "probabilities": {
+      "Stays": 8.568473042026029e-05,
+      "Churns": 0.9999143152695809
+    }
+  }
+]

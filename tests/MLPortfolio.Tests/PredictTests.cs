@@ -36,33 +36,69 @@ public class PredictTests : IClassFixture<WebApplicationFactory<Program>>
         return _factory.Services.GetRequiredService<IModelRunner>().Predict(slug, schema, validation.Values);
     }
 
-    [Fact]
-    public void Parity_LogisticRegression_MatchesPythonOnReferenceInputs()
+    public static TheoryData<string> ClassificationSlugs => new()
     {
-        var cases = LoadFixtures("logistic-regression").EnumerateArray().ToList();
+        "logistic-regression", "decision-tree", "svm", "knn", "naive-bayes",
+    };
+
+    public static TheoryData<string> RegressionSlugs => new()
+    {
+        "linear-regression", "random-forest",
+    };
+
+    [Theory]
+    [MemberData(nameof(ClassificationSlugs))]
+    public void Parity_Classifier_MatchesPythonOnReferenceInputs(string slug)
+    {
+        var cases = LoadFixtures(slug).EnumerateArray().ToList();
         Assert.True(cases.Count >= 5, "need at least 5 reference inputs");
 
         foreach (var c in cases)
         {
-            var result = RunDotNet("logistic-regression", c.GetProperty("input"));
+            var result = RunDotNet(slug, c.GetProperty("input"));
+            var expected = c.GetProperty("probabilities").EnumerateObject().ToList();
 
-            Assert.Equal(c.GetProperty("label").GetString(), result.Label);
-            foreach (var expected in c.GetProperty("probabilities").EnumerateObject())
-                Assert.Equal(expected.Value.GetDouble(), result.Probabilities![expected.Name], precision: 4);
+            // SVM probabilities come from Platt scaling and differ slightly in float32.
+            var precision = slug == "svm" ? 2 : 4;
+            foreach (var e in expected)
+                Assert.Equal(e.Value.GetDouble(), result.Probabilities![e.Name], precision);
+
+            // The predicted class must match unless the top two classes are a near tie.
+            var sorted = expected.Select(e => e.Value.GetDouble()).OrderByDescending(v => v).ToList();
+            if (sorted[0] - sorted[1] > 0.01)
+                Assert.Equal(c.GetProperty("label").GetString(), result.Label);
         }
     }
 
-    [Fact]
-    public void Parity_LinearRegression_MatchesPythonOnReferenceInputs()
+    [Theory]
+    [MemberData(nameof(RegressionSlugs))]
+    public void Parity_Regressor_MatchesPythonOnReferenceInputs(string slug)
     {
-        var cases = LoadFixtures("linear-regression").EnumerateArray().ToList();
+        var cases = LoadFixtures(slug).EnumerateArray().ToList();
         Assert.True(cases.Count >= 5, "need at least 5 reference inputs");
 
         foreach (var c in cases)
         {
-            var result = RunDotNet("linear-regression", c.GetProperty("input"));
+            var result = RunDotNet(slug, c.GetProperty("input"));
 
             Assert.Equal(c.GetProperty("prediction").GetDouble(), result.Prediction, precision: 3);
+        }
+    }
+
+    [Theory]
+    [MemberData(nameof(ClassificationSlugs))]
+    [MemberData(nameof(RegressionSlugs))]
+    public async Task EveryPreset_PredictsSuccessfullyThroughTheEndpoint(string slug)
+    {
+        var schema = _factory.Services.GetRequiredService<ISchemaStore>().Get(slug)!;
+        Assert.NotEmpty(schema.Presets);
+
+        foreach (var preset in schema.Presets)
+        {
+            var json = JsonSerializer.Serialize(preset.Values);
+            var response = await _factory.CreateClient().PostAsync($"/predict/{slug}", Json(json));
+
+            Assert.True(response.StatusCode == HttpStatusCode.OK, $"{slug} / {preset.Name}: {response.StatusCode}");
         }
     }
 

@@ -1,0 +1,22 @@
+[project]
+name = "naive-bayes"
+version = "0.1.0"
+description = "Bank customer churn classifier using Gaussian naive Bayes, exported to ONNX for the ML Portfolio site."
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "numpy>=2.0",
+    "pandas>=2.2",
+    "scikit-learn>=1.5,<1.9",
+    "skl2onnx>=1.17",
+    "onnx>=1.16",
+    "onnxruntime>=1.19",
+    "matplotlib>=3.9",
+]
+
+[dependency-groups]
+dev = [
+    "nbconvert>=7.16",
+    "nbformat>=5.10",
+    "ipykernel>=6.29",
+]

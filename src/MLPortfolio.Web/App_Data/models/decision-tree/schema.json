@@ -1,0 +1,94 @@
+{
+  "modelFile": "model.onnx",
+  "modelVersion": "1.0.0",
+  "inputs": [
+    {
+      "type": "number",
+      "name": "credit_score",
+      "label": "Credit score",
+      "min": 300,
+      "max": 850,
+      "step": 1,
+      "default": 680,
+      "help": "A 300-850 credit score"
+    },
+    {
+      "type": "number",
+      "name": "annual_income_k",
+      "label": "Annual income (thousands)",
+      "min": 15,
+      "max": 250,
+      "step": 1,
+      "default": 70
+    },
+    {
+      "type": "number",
+      "name": "loan_to_income_pct",
+      "label": "Loan as % of annual income",
+      "min": 5,
+      "max": 120,
+      "step": 1,
+      "default": 40,
+      "help": "Requested loan amount divided by yearly income"
+    },
+    {
+      "type": "number",
+      "name": "employment_years",
+      "label": "Years in current job",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "select",
+      "name": "collateral",
+      "label": "Collateral offered",
+      "options": [
+        "none",
+        "vehicle",
+        "property"
+      ],
+      "default": "none"
+    }
+  ],
+  "outputs": {
+    "type": "classification",
+    "labels": [
+      "Rejected",
+      "Approved"
+    ]
+  },
+  "presets": [
+    {
+      "name": "Strong applicant",
+      "values": {
+        "credit_score": 780,
+        "annual_income_k": 120,
+        "loan_to_income_pct": 20,
+        "employment_years": 12,
+        "collateral": "property"
+      }
+    },
+    {
+      "name": "Weak applicant",
+      "values": {
+        "credit_score": 560,
+        "annual_income_k": 40,
+        "loan_to_income_pct": 85,
+        "employment_years": 1,
+        "collateral": "none"
+      }
+    },
+    {
+      "name": "Borderline",
+      "values": {
+        "credit_score": 640,
+        "annual_income_k": 60,
+        "loan_to_income_pct": 45,
+        "employment_years": 3,
+        "collateral": "vehicle"
+      }
+    }
+  ]
+}

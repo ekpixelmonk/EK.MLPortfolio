@@ -47,5 +47,94 @@
       { "file": "residual-distribution.png", "caption": "Residuals are roughly bell-shaped and centred on zero." }
     ],
     "order": 2
+  },
+  {
+    "slug": "decision-tree",
+    "title": "Decision Tree",
+    "category": "zoo",
+    "summary": "Decides whether a loan application is approved using a short tree of yes/no questions you can read.",
+    "tags": ["classification", "trees", "credit risk"],
+    "status": "live",
+    "inferenceMode": "onnx",
+    "disclaimer": "finance",
+    "thumbnail": "charts/thumbnail.png",
+    "charts": [
+      { "file": "tree.png", "caption": "The learned tree (top two levels): each box is a yes/no question about the applicant." },
+      { "file": "feature-importance.png", "caption": "Which questions the tree relies on most when deciding." },
+      { "file": "depth-vs-accuracy.png", "caption": "Deeper trees memorise the training data; held-out accuracy stops improving early." },
+      { "file": "confusion-matrix.png", "caption": "Confusion matrix on held-out data." }
+    ],
+    "order": 3
+  },
+  {
+    "slug": "random-forest",
+    "title": "Random Forest",
+    "category": "zoo",
+    "summary": "Predicts a stock's 30-day volatility from beta, leverage, size and sector with an ensemble of decision trees.",
+    "tags": ["regression", "trees", "volatility"],
+    "status": "live",
+    "inferenceMode": "onnx",
+    "disclaimer": "finance",
+    "thumbnail": "charts/thumbnail.png",
+    "charts": [
+      { "file": "predicted-vs-actual.png", "caption": "Predicted against actual volatility on held-out stocks." },
+      { "file": "feature-importance.png", "caption": "Which inputs the forest relies on most to predict volatility." },
+      { "file": "forest-vs-linear.png", "caption": "Same data, same inputs: the forest captures effects a straight line misses." },
+      { "file": "beta-by-sector.png", "caption": "Predicted volatility as beta rises, other inputs held typical. The slope differs by sector." }
+    ],
+    "order": 4
+  },
+  {
+    "slug": "svm",
+    "title": "Support Vector Machine",
+    "category": "zoo",
+    "summary": "Estimates the probability that a card transaction is fraud using an RBF support vector machine.",
+    "tags": ["classification", "kernel methods", "fraud"],
+    "status": "live",
+    "inferenceMode": "onnx",
+    "disclaimer": "finance",
+    "thumbnail": "charts/thumbnail.png",
+    "charts": [
+      { "file": "decision-boundary.png", "caption": "Fraud probability across amount and distance for a 3am online purchase; the line marks 50%." },
+      { "file": "roc-curve.png", "caption": "ROC curve on held-out transactions." },
+      { "file": "score-distribution.png", "caption": "How cleanly predicted fraud probabilities separate the two groups." },
+      { "file": "confusion-matrix.png", "caption": "Confusion matrix on held-out data." }
+    ],
+    "order": 5
+  },
+  {
+    "slug": "knn",
+    "title": "k-Nearest Neighbours",
+    "category": "zoo",
+    "summary": "Classifies a stock as Value, Growth or Income by finding the most similar stocks.",
+    "tags": ["classification", "instance-based", "equities"],
+    "status": "live",
+    "inferenceMode": "onnx",
+    "disclaimer": "finance",
+    "thumbnail": "charts/thumbnail.png",
+    "charts": [
+      { "file": "stock-map.png", "caption": "Held-out stocks by P/E and revenue growth. Value and Income overlap, Growth stands apart." },
+      { "file": "k-vs-accuracy.png", "caption": "With k=1 the model memorises noise; a moderate k generalises better." },
+      { "file": "confusion-matrix.png", "caption": "Confusion matrix on held-out data." }
+    ],
+    "order": 6
+  },
+  {
+    "slug": "naive-bayes",
+    "title": "Naive Bayes",
+    "category": "zoo",
+    "summary": "Estimates the chance that a bank customer leaves from age, balance, products, tenure and activity.",
+    "tags": ["classification", "probabilistic", "customer churn"],
+    "status": "live",
+    "inferenceMode": "onnx",
+    "disclaimer": "finance",
+    "thumbnail": "charts/thumbnail.png",
+    "charts": [
+      { "file": "feature-distributions.png", "caption": "Naive Bayes models each feature's distribution per class; these are the shapes it compares." },
+      { "file": "roc-curve.png", "caption": "ROC curve on held-out customers." },
+      { "file": "calibration.png", "caption": "Naive Bayes is often over-confident: probabilities drift from observed rates." },
+      { "file": "confusion-matrix.png", "caption": "Confusion matrix on held-out data." }
+    ],
+    "order": 7
   }
 ]

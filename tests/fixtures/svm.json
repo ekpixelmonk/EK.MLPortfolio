@@ -1,0 +1,114 @@
+[
+  {
+    "input": {
+      "amount": 42.0,
+      "hour_of_day": 13.0,
+      "distance_from_home_km": 3.0,
+      "txns_last_hour": 1.0,
+      "channel": "in-store"
+    },
+    "label": "Legitimate",
+    "probabilities": {
+      "Legitimate": 0.8843581063970092,
+      "Fraud": 0.11564189360299096
+    }
+  },
+  {
+    "input": {
+      "amount": 1900.0,
+      "hour_of_day": 3.0,
+      "distance_from_home_km": 1400.0,
+      "txns_last_hour": 7.0,
+      "channel": "online"
+    },
+    "label": "Fraud",
+    "probabilities": {
+      "Legitimate": 0.447608377984267,
+      "Fraud": 0.5523916220157328
+    }
+  },
+  {
+    "input": {
+      "amount": 3262.0,
+      "hour_of_day": 1.0,
+      "distance_from_home_km": 60.0,
+      "txns_last_hour": 13.0,
+      "channel": "online"
+    },
+    "label": "Fraud",
+    "probabilities": {
+      "Legitimate": 0.44768127972202054,
+      "Fraud": 0.5523187202779795
+    }
+  },
+  {
+    "input": {
+      "amount": 1124.0,
+      "hour_of_day": 17.0,
+      "distance_from_home_km": 791.0,
+      "txns_last_hour": 6.0,
+      "channel": "online"
+    },
+    "label": "Fraud",
+    "probabilities": {
+      "Legitimate": 0.42451137035106384,
+      "Fraud": 0.5754886296489362
+    }
+  },
+  {
+    "input": {
+      "amount": 2256.0,
+      "hour_of_day": 22.0,
+      "distance_from_home_km": 2676.0,
+      "txns_last_hour": 4.0,
+      "channel": "atm"
+    },
+    "label": "Fraud",
+    "probabilities": {
+      "Legitimate": 0.44768125206291637,
+      "Fraud": 0.5523187479370836
+    }
+  },
+  {
+    "input": {
+      "amount": 2111.0,
+      "hour_of_day": 0.0,
+      "distance_from_home_km": 927.0,
+      "txns_last_hour": 14.0,
+      "channel": "in-store"
+    },
+    "label": "Fraud",
+    "probabilities": {
+      "Legitimate": 0.4476812797216733,
+      "Fraud": 0.5523187202783266
+    }
+  },
+  {
+    "input": {
+      "amount": 4191.0,
+      "hour_of_day": 12.0,
+      "distance_from_home_km": 1456.0,
+      "txns_last_hour": 14.0,
+      "channel": "atm"
+    },
+    "label": "Fraud",
+    "probabilities": {
+      "Legitimate": 0.44768127972202904,
+      "Fraud": 0.552318720277971
+    }
+  },
+  {
+    "input": {
+      "amount": 4714.0,
+      "hour_of_day": 23.0,
+      "distance_from_home_km": 101.0,
+      "txns_last_hour": 2.0,
+      "channel": "online"
+    },
+    "label": "Fraud",
+    "probabilities": {
+      "Legitimate": 0.44768127972202904,
+      "Fraud": 0.552318720277971
+    }
+  }
+]

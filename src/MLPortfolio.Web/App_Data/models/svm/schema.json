@@ -1,0 +1,83 @@
+{
+  "modelFile": "model.onnx",
+  "modelVersion": "1.0.0",
+  "inputs": [
+    {
+      "type": "number",
+      "name": "amount",
+      "label": "Transaction amount",
+      "min": 1,
+      "max": 5000,
+      "step": 1,
+      "default": 80
+    },
+    {
+      "type": "number",
+      "name": "hour_of_day",
+      "label": "Hour of day (0-23)",
+      "min": 0,
+      "max": 23,
+      "step": 1,
+      "default": 14
+    },
+    {
+      "type": "number",
+      "name": "distance_from_home_km",
+      "label": "Distance from home (km)",
+      "min": 0,
+      "max": 3000,
+      "step": 1,
+      "default": 5,
+      "help": "Distance between the card's home area and the merchant"
+    },
+    {
+      "type": "number",
+      "name": "txns_last_hour",
+      "label": "Transactions in the last hour",
+      "min": 0,
+      "max": 15,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "select",
+      "name": "channel",
+      "label": "Channel",
+      "options": [
+        "in-store",
+        "online",
+        "atm"
+      ],
+      "default": "in-store"
+    }
+  ],
+  "outputs": {
+    "type": "classification",
+    "labels": [
+      "Legitimate",
+      "Fraud"
+    ]
+  },
+  "presets": [
+    {
+      "name": "Everyday purchase",
+      "values": {
+        "amount": 42,
+        "hour_of_day": 13,
+        "distance_from_home_km": 3,
+        "txns_last_hour": 1,
+        "channel": "in-store"
+      }
+    },
+    {
+      "name": "Suspicious burst",
+      "values": {
+        "amount": 1900,
+        "hour_of_day": 3,
+        "distance_from_home_km": 1400,
+        "txns_last_hour": 7,
+        "channel": "online"
+      }
+    }
+  ]
+}

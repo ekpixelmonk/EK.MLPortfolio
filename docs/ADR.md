@@ -195,6 +195,18 @@ Living technical record for ML Portfolio. Companion to [SPEC.md](../SPEC.md): th
 
 ---
 
+## ADR-022: Zoo batch 1 conventions
+
+- **Status:** accepted.
+- **Context:** Five more Zoo models were added in one batch. They had to fit the existing schema (classification with labels, or regression with a unit) and the parity-test approach without new .NET code.
+- **Decision:**
+  - Only models whose output is a class or a number are built now: decision tree, random forest (regression), SVM, KNN (three classes) and naive Bayes. Gradient boosting (needs `onnxmltools`), k-means, PCA, GMM/DBSCAN, MLP and time series are deferred; the unsupervised ones need new output types in `schema.json`.
+  - The predicted class is the arg-max of the ONNX probabilities, in `train.py` checks, fixtures and the .NET runner alike. SVC's own label output uses a different rule near 50% and disagreed with the arg-max for 0.24% of rows.
+  - `scikit-learn` is pinned `<1.9`: `SVC(probability=True)` is deprecated from 1.9 and the replacement may not convert with skl2onnx.
+  - Parity tolerance is per model: 1e-4 on probabilities by default, 2e-3 for the SVM (Platt scaling in float32). The .NET test skips the class check only when the top two probabilities are within 0.01.
+  - Every model's write-up reports accuracy next to the majority-class baseline; where the model barely beats it (SVM) the page says so and leans on AUC.
+- **Consequences:** adding a model is a `train.py`, a catalog entry, a write-up and a line in the test lists. Charts that extrapolate (the SVM probability surface) are limited to the range with plenty of training data.
+
 ## Phase Log
 
 Record what was actually built, deviations from the spec, gotchas and follow-ups. Add one entry per phase when it completes.
@@ -285,5 +297,27 @@ Record what was actually built, deviations from the spec, gotchas and follow-ups
 
 - The NSE regime classifier already has a "Coming soon" card (Phase 1) and a project page with write-up and finance disclaimer (Phase 2), with `inferenceMode: none` so no form is shown. Nothing further was needed; `/predict/nse-regime` returns a JSON 404.
 ### Phase 4: Flagship NSE regime classifier (not started)
-### Phase 5: Remaining projects (not started)
+### Phase 5: Remaining projects (in progress)
+
+#### Zoo batch 1 (complete)
+
+- **Built:** `ml/decision-tree`, `ml/random-forest`, `ml/svm`, `ml/knn`, `ml/naive-bayes` (uv projects with `train.py`, executed notebook, README), generated model/schema/charts/fixtures, `projects.json` entries (orders 3-7), write-ups with real results, test updates.
+- **Results (held-out):**
+
+| Model | Accuracy / R² | Baseline | ROC AUC |
+|---|---|---|---|
+| Decision tree (approval) | 93.2% | 55.7% (majority) | 0.93 |
+| SVM (fraud, 15% positives) | 85.8% | 85.0% (majority) | 0.75 |
+| KNN (3 classes) | 85.3% | 37.9% (majority) | 0.95 |
+| Naive Bayes (churn, 35%) | 71.9% | 65.4% (majority) | 0.79 |
+| Random forest (volatility) | R² 0.85, RMSE 2.57 | linear R² 0.80, RMSE 3.01 | n/a |
+
+  ONNX matches scikit-learn to within 1.2e-6 on probabilities (2.2e-8 for tree, KNN) and 4e-6 on the forest's predictions; the forest's ONNX file is about 0.9 MB.
+- **Verification:** `dotnet test` passes 138 tests: parity for all seven models against the Python fixtures, every preset of every model through `/predict`, homepage and page checks for the new projects. Charts for the tree, SVM, forest and naive Bayes were viewed and fixed (overlapping tree boxes, SVM surface artefact at large amounts, hidden overlapping histograms). The notebooks executed without errors.
+- **Not verified:** the form script in a browser (still untested end to end); notebook outputs were not read cell by cell.
+- **Gotchas:**
+  - Initial synthetic data was off: SVM AUC 0.62 (signal too weak), KNN 98% (too easy), naive Bayes below the baseline. The generators were retuned until results were plausible and honest.
+  - A running dev server locks `bin\...\MLPortfolio.Web.exe`, which breaks `dotnet test`; stop it first.
+  - Git Bash heredocs with apostrophes failed in one tool call; write Markdown files with the editor tool.
+- **Follow-ups:** gradient boosting (`onnxmltools`), then the unsupervised models once `schema.json` has cluster/projection outputs; GitHub remote and `repoUrl`; browser check of the form.
 ### Phase 6: Docker, CI, rate limiting, OpenGraph, deployment (not started)

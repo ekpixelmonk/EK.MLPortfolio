@@ -1,0 +1,119 @@
+[
+  {
+    "input": {
+      "pe_ratio": 11.0,
+      "dividend_yield_pct": 2.5,
+      "revenue_growth_pct": 4.0
+    },
+    "label": "Value",
+    "probabilities": {
+      "Value": 0.8,
+      "Growth": 0.0,
+      "Income": 0.2
+    }
+  },
+  {
+    "input": {
+      "pe_ratio": 45.0,
+      "dividend_yield_pct": 0.2,
+      "revenue_growth_pct": 32.0
+    },
+    "label": "Growth",
+    "probabilities": {
+      "Value": 0.0,
+      "Growth": 1.0,
+      "Income": 0.0
+    }
+  },
+  {
+    "input": {
+      "pe_ratio": 17.0,
+      "dividend_yield_pct": 5.8,
+      "revenue_growth_pct": 3.0
+    },
+    "label": "Income",
+    "probabilities": {
+      "Value": 0.0,
+      "Growth": 0.0,
+      "Income": 1.0
+    }
+  },
+  {
+    "input": {
+      "pe_ratio": 53.0,
+      "dividend_yield_pct": 0.4,
+      "revenue_growth_pct": -8.5
+    },
+    "label": "Growth",
+    "probabilities": {
+      "Value": 0.0,
+      "Growth": 1.0,
+      "Income": 0.0
+    }
+  },
+  {
+    "input": {
+      "pe_ratio": 67.5,
+      "dividend_yield_pct": 5.300000000000001,
+      "revenue_growth_pct": 5.5
+    },
+    "label": "Growth",
+    "probabilities": {
+      "Value": 0.0,
+      "Growth": 1.0,
+      "Income": 0.0
+    }
+  },
+  {
+    "input": {
+      "pe_ratio": 61.0,
+      "dividend_yield_pct": 2.4000000000000004,
+      "revenue_growth_pct": 19.5
+    },
+    "label": "Growth",
+    "probabilities": {
+      "Value": 0.0,
+      "Growth": 1.0,
+      "Income": 0.0
+    }
+  },
+  {
+    "input": {
+      "pe_ratio": 37.5,
+      "dividend_yield_pct": 8.6,
+      "revenue_growth_pct": 52.5
+    },
+    "label": "Growth",
+    "probabilities": {
+      "Value": 0.13333333333333333,
+      "Growth": 0.7333333333333333,
+      "Income": 0.13333333333333333
+    }
+  },
+  {
+    "input": {
+      "pe_ratio": 24.5,
+      "dividend_yield_pct": 2.5,
+      "revenue_growth_pct": 19.5
+    },
+    "label": "Growth",
+    "probabilities": {
+      "Value": 0.4,
+      "Growth": 0.6,
+      "Income": 0.0
+    }
+  },
+  {
+    "input": {
+      "pe_ratio": 3.5,
+      "dividend_yield_pct": 2.8000000000000003,
+      "revenue_growth_pct": 56.5
+    },
+    "label": "Growth",
+    "probabilities": {
+      "Value": 0.0,
+      "Growth": 1.0,
+      "Income": 0.0
+    }
+  }
+]

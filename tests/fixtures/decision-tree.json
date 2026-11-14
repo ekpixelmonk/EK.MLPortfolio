@@ -1,0 +1,128 @@
+[
+  {
+    "input": {
+      "credit_score": 780.0,
+      "annual_income_k": 120.0,
+      "loan_to_income_pct": 20.0,
+      "employment_years": 12.0,
+      "collateral": "property"
+    },
+    "label": "Approved",
+    "probabilities": {
+      "Rejected": 0.05931321540062435,
+      "Approved": 0.9406867845993756
+    }
+  },
+  {
+    "input": {
+      "credit_score": 560.0,
+      "annual_income_k": 40.0,
+      "loan_to_income_pct": 85.0,
+      "employment_years": 1.0,
+      "collateral": "none"
+    },
+    "label": "Rejected",
+    "probabilities": {
+      "Rejected": 0.9443231441048034,
+      "Approved": 0.055676855895196505
+    }
+  },
+  {
+    "input": {
+      "credit_score": 640.0,
+      "annual_income_k": 60.0,
+      "loan_to_income_pct": 45.0,
+      "employment_years": 3.0,
+      "collateral": "vehicle"
+    },
+    "label": "Rejected",
+    "probabilities": {
+      "Rejected": 0.9443231441048034,
+      "Approved": 0.055676855895196505
+    }
+  },
+  {
+    "input": {
+      "credit_score": 659.0,
+      "annual_income_k": 25.0,
+      "loan_to_income_pct": 7.0,
+      "employment_years": 25.0,
+      "collateral": "vehicle"
+    },
+    "label": "Approved",
+    "probabilities": {
+      "Rejected": 0.009900990099009901,
+      "Approved": 0.9900990099009901
+    }
+  },
+  {
+    "input": {
+      "credit_score": 424.0,
+      "annual_income_k": 192.0,
+      "loan_to_income_pct": 35.0,
+      "employment_years": 13.0,
+      "collateral": "vehicle"
+    },
+    "label": "Rejected",
+    "probabilities": {
+      "Rejected": 0.9728682170542635,
+      "Approved": 0.027131782945736434
+    }
+  },
+  {
+    "input": {
+      "credit_score": 548.0,
+      "annual_income_k": 239.0,
+      "loan_to_income_pct": 108.0,
+      "employment_years": 8.0,
+      "collateral": "property"
+    },
+    "label": "Rejected",
+    "probabilities": {
+      "Rejected": 0.9567307692307693,
+      "Approved": 0.04326923076923077
+    }
+  },
+  {
+    "input": {
+      "credit_score": 532.0,
+      "annual_income_k": 16.0,
+      "loan_to_income_pct": 41.0,
+      "employment_years": 29.0,
+      "collateral": "none"
+    },
+    "label": "Rejected",
+    "probabilities": {
+      "Rejected": 0.9728682170542635,
+      "Approved": 0.027131782945736434
+    }
+  },
+  {
+    "input": {
+      "credit_score": 761.0,
+      "annual_income_k": 141.0,
+      "loan_to_income_pct": 61.0,
+      "employment_years": 28.0,
+      "collateral": "property"
+    },
+    "label": "Approved",
+    "probabilities": {
+      "Rejected": 0.16015625,
+      "Approved": 0.83984375
+    }
+  },
+  {
+    "input": {
+      "credit_score": 819.0,
+      "annual_income_k": 250.0,
+      "loan_to_income_pct": 9.0,
+      "employment_years": 4.0,
+      "collateral": "vehicle"
+    },
+    "label": "Approved",
+    "probabilities": {
+      "Rejected": 0.19047619047619047,
+      "Approved": 0.8095238095238095
+    }
+  }
+]

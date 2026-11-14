@@ -1,0 +1,82 @@
+{
+  "modelFile": "model.onnx",
+  "modelVersion": "1.0.0",
+  "inputs": [
+    {
+      "type": "number",
+      "name": "age",
+      "label": "Age",
+      "min": 18,
+      "max": 90,
+      "step": 1,
+      "default": 40
+    },
+    {
+      "type": "number",
+      "name": "balance_k",
+      "label": "Account balance (thousands)",
+      "min": 0,
+      "max": 250,
+      "step": 1,
+      "default": 40
+    },
+    {
+      "type": "number",
+      "name": "products",
+      "label": "Products held",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 2,
+      "help": "Accounts, cards, loans, deposits"
+    },
+    {
+      "type": "number",
+      "name": "tenure_years",
+      "label": "Years as a customer",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "select",
+      "name": "active_member",
+      "label": "Active in the last 3 months",
+      "options": [
+        "yes",
+        "no"
+      ],
+      "default": "yes"
+    }
+  ],
+  "outputs": {
+    "type": "classification",
+    "labels": [
+      "Stays",
+      "Churns"
+    ]
+  },
+  "presets": [
+    {
+      "name": "Loyal customer",
+      "values": {
+        "age": 45,
+        "balance_k": 60,
+        "products": 3,
+        "tenure_years": 14,
+        "active_member": "yes"
+      }
+    },
+    {
+      "name": "At risk",
+      "values": {
+        "age": 58,
+        "balance_k": 140,
+        "products": 1,
+        "tenure_years": 1,
+        "active_member": "no"
+      }
+    }
+  ]
+}

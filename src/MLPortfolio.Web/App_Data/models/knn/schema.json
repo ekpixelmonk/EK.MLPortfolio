@@ -1,0 +1,68 @@
+{
+  "modelFile": "model.onnx",
+  "modelVersion": "1.0.0",
+  "inputs": [
+    {
+      "type": "number",
+      "name": "pe_ratio",
+      "label": "Price / earnings ratio",
+      "min": 3,
+      "max": 80,
+      "step": 0.5,
+      "default": 20,
+      "help": "Share price divided by earnings per share"
+    },
+    {
+      "type": "number",
+      "name": "dividend_yield_pct",
+      "label": "Dividend yield (%)",
+      "min": 0,
+      "max": 9,
+      "step": 0.1,
+      "default": 1.5
+    },
+    {
+      "type": "number",
+      "name": "revenue_growth_pct",
+      "label": "Revenue growth (%, yearly)",
+      "min": -10,
+      "max": 60,
+      "step": 0.5,
+      "default": 10
+    }
+  ],
+  "outputs": {
+    "type": "classification",
+    "labels": [
+      "Value",
+      "Growth",
+      "Income"
+    ]
+  },
+  "presets": [
+    {
+      "name": "Cheap and steady",
+      "values": {
+        "pe_ratio": 11,
+        "dividend_yield_pct": 2.5,
+        "revenue_growth_pct": 4
+      }
+    },
+    {
+      "name": "High-growth",
+      "values": {
+        "pe_ratio": 45,
+        "dividend_yield_pct": 0.2,
+        "revenue_growth_pct": 32
+      }
+    },
+    {
+      "name": "Dividend payer",
+      "values": {
+        "pe_ratio": 17,
+        "dividend_yield_pct": 5.8,
+        "revenue_growth_pct": 3
+      }
+    }
+  ]
+}
