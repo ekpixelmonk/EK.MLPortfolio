@@ -9,6 +9,8 @@ public sealed record ProjectMeta
     public string Summary { get; init; } = "";
     public IReadOnlyList<string> Tags { get; init; } = [];
     public string Status { get; init; } = "";
+    /// <summary>Subject area (see <see cref="ProjectDomains"/>). Required for flagship projects.</summary>
+    public string? Domain { get; init; }
     public string InferenceMode { get; init; } = ProjectInferenceModes.None;
     public string? Disclaimer { get; init; }
     public string? RepoUrl { get; init; }
@@ -24,6 +26,8 @@ public sealed record ProjectMeta
         _ => "Coming soon",
     };
 
+    public string? DomainLabel => ProjectDomains.LabelFor(Domain);
+
     /// <summary>Web path of the thumbnail, or null when the project has none.</summary>
     public string? ThumbnailPath => string.IsNullOrWhiteSpace(Thumbnail) ? null : $"~/projects/{Slug}/{Thumbnail}";
 }
@@ -35,6 +39,24 @@ public static class ProjectCategories
     public const string Flagship = "flagship";
     public const string Zoo = "zoo";
     public static readonly IReadOnlySet<string> All = new HashSet<string> { Flagship, Zoo };
+}
+
+/// <summary>Subject areas a project can belong to. Add a value here to introduce a new domain.</summary>
+public static class ProjectDomains
+{
+    public const string Finance = "finance";
+    public const string Cybersecurity = "cybersecurity";
+
+    private static readonly Dictionary<string, string> Labels = new()
+    {
+        [Finance] = "Finance",
+        [Cybersecurity] = "Cybersecurity",
+    };
+
+    public static readonly IReadOnlySet<string> All = new HashSet<string>(Labels.Keys);
+
+    public static string? LabelFor(string? domain) =>
+        domain is not null && Labels.TryGetValue(domain, out var label) ? label : null;
 }
 
 public static class ProjectStatuses

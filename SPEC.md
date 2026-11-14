@@ -72,7 +72,8 @@ All code lives in this single repo initially. To keep any project extractable in
 - Tag filter chips and text search (client-side).
 - Card click navigates to `/projects/{slug}` (404 until Phase 2 builds the project page).
 - Owner name, tagline, description and GitHub/LinkedIn URLs come from the `Site` section of `appsettings.json`; a social link is rendered only when its URL is set. Twitter is not included yet.
-- Filters: one tag chip active at a time plus a text search over title, summary and tags; a section hides when it has no visible cards, and an empty state shows when nothing matches.
+- Flagship projects have a **domain** (`finance`, `cybersecurity`; add more in `ProjectDomains`). It is shown as a label on the card.
+- Filters: one pill active at a time (**All**, then a pill per domain *in use*, then tag pills) plus a text search over title, summary, domain and tags. Only domains used by a project get a pill, so Cybersecurity appears once a cybersecurity project exists. Search;  a section hides when it has no visible cards, and an empty state shows when nothing matches.
 - Catalog entries stay `coming-soon` until their project is actually built, so a "Live" badge never points at a missing page.
 
 ### 4.2 Project page (`/projects/{slug}`)
@@ -101,9 +102,10 @@ Unknown slug returns a styled 404.
   "slug": "nse-regime",
   "title": "NSE Market Regime Classifier",
   "category": "flagship",
+  "domain": "finance",
   "disclaimer": "finance",
   "summary": "Classifies NIFTY market regimes using trend and volatility features.",
-  "tags": ["classification", "time series", "NSE"],
+  "tags": ["classification", "time series"],
   "status": "live",
   "inferenceMode": "onnx",
   "repoUrl": "https://github.com/<user>/<repo>",

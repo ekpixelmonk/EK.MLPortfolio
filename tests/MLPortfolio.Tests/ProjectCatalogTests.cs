@@ -7,10 +7,17 @@ public class ProjectCatalogTests
 {
     private static string Entry(
         string slug = "demo", string title = "Demo", string category = "zoo", string summary = "A demo.",
-        string status = "live", string inference = "onnx", int order = 1, string tags = "\"a\", \"b\"") => $$"""
+        string status = "live", string inference = "onnx", int order = 1, string tags = "\"a\", \"b\"",
+        string? domain = null)
+    {
+        // Flagship projects require a domain, so default one in for them.
+        domain ??= category == "flagship" ? "finance" : null;
+        var domainJson = domain is null ? "" : $"\"domain\": \"{domain}\", ";
+        return $$"""
         { "slug": "{{slug}}", "title": "{{title}}", "category": "{{category}}", "summary": "{{summary}}",
-          "tags": [{{tags}}], "status": "{{status}}", "inferenceMode": "{{inference}}", "order": {{order}} }
+          {{domainJson}}"tags": [{{tags}}], "status": "{{status}}", "inferenceMode": "{{inference}}", "order": {{order}} }
         """;
+    }
 
     private static string Json(params string[] entries) => "[" + string.Join(",", entries) + "]";
 
@@ -55,6 +62,59 @@ public class ProjectCatalogTests
             Entry("a", tags: "\"zeta\", \"Alpha\""), Entry("b", tags: "\"alpha\", \"mid\"")));
 
         Assert.Equal(["Alpha", "mid", "zeta"], catalog.Tags);
+    }
+
+    [Fact]
+    public void Domains_ListsOnlyDomainsInUse_SortedByLabel()
+    {
+        var catalog = ProjectCatalog.Parse(Json(
+            Entry("a", category: "flagship", domain: "finance"),
+            Entry("b", category: "flagship", domain: "finance"),
+            Entry("z")));
+
+        Assert.Equal(["finance"], catalog.Domains);
+        Assert.DoesNotContain("cybersecurity", catalog.Domains);
+    }
+
+    [Fact]
+    public void Domains_WithBothDomainsInUse_AreSortedByLabel()
+    {
+        var catalog = ProjectCatalog.Parse(Json(
+            Entry("a", category: "flagship", domain: "finance"),
+            Entry("b", category: "flagship", domain: "cybersecurity")));
+
+        Assert.Equal(["cybersecurity", "finance"], catalog.Domains);
+    }
+
+    [Fact]
+    public void DomainLabel_IsDisplayNameOrNull()
+    {
+        var catalog = ProjectCatalog.Parse(Json(
+            Entry("a", category: "flagship", domain: "cybersecurity"), Entry("z")));
+
+        Assert.Equal("Cybersecurity", catalog.Find("a")!.DomainLabel);
+        Assert.Null(catalog.Find("z")!.DomainLabel);
+    }
+
+    [Fact]
+    public void Parse_UnknownDomain_Throws()
+    {
+        var ex = Assert.Throws<ProjectCatalogException>(() =>
+            ProjectCatalog.Parse(Json(Entry(category: "flagship", domain: "healthcare"))));
+
+        Assert.Contains("domain 'healthcare'", ex.Message);
+    }
+
+    [Fact]
+    public void Parse_FlagshipWithoutDomain_Throws()
+    {
+        var json = """
+            [{ "slug": "a", "title": "A", "category": "flagship", "summary": "s", "status": "live" }]
+            """;
+
+        var ex = Assert.Throws<ProjectCatalogException>(() => ProjectCatalog.Parse(json));
+
+        Assert.Contains("domain is required for flagship", ex.Message);
     }
 
     [Fact]

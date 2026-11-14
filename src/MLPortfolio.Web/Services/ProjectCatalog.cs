@@ -13,6 +13,9 @@ public interface IProjectCatalog
     /// <summary>Distinct tags across all projects, sorted case-insensitively.</summary>
     IReadOnlyList<string> Tags { get; }
 
+    /// <summary>Domains that at least one project uses, sorted by display label. Unused domains are not listed.</summary>
+    IReadOnlyList<string> Domains { get; }
+
     /// <summary>Case-insensitive slug lookup; null when unknown.</summary>
     ProjectMeta? Find(string slug);
 }
@@ -36,10 +39,13 @@ public sealed class ProjectCatalog : IProjectCatalog
         _bySlug = All.ToDictionary(p => p.Slug, StringComparer.OrdinalIgnoreCase);
         Tags = All.SelectMany(p => p.Tags).Distinct(StringComparer.OrdinalIgnoreCase)
                   .OrderBy(t => t, StringComparer.OrdinalIgnoreCase).ToList();
+        Domains = All.Select(p => p.Domain).OfType<string>().Distinct()
+                     .OrderBy(d => ProjectDomains.LabelFor(d), StringComparer.OrdinalIgnoreCase).ToList();
     }
 
     public IReadOnlyList<ProjectMeta> All { get; }
     public IReadOnlyList<string> Tags { get; }
+    public IReadOnlyList<string> Domains { get; }
 
     public IReadOnlyList<ProjectMeta> InCategory(string category) =>
         All.Where(p => p.Category == category).ToList();
@@ -93,6 +99,10 @@ public sealed class ProjectCatalog : IProjectCatalog
             if (string.IsNullOrWhiteSpace(p.Summary)) errors.Add($"{who}: summary is required.");
             if (!ProjectCategories.All.Contains(p.Category))
                 errors.Add($"{who}: category '{p.Category}' must be one of {string.Join(", ", ProjectCategories.All)}.");
+            if (p.Domain is not null && !ProjectDomains.All.Contains(p.Domain))
+                errors.Add($"{who}: domain '{p.Domain}' must be one of {string.Join(", ", ProjectDomains.All)}.");
+            if (p.Category == ProjectCategories.Flagship && string.IsNullOrWhiteSpace(p.Domain))
+                errors.Add($"{who}: domain is required for flagship projects.");
             if (!ProjectStatuses.All.Contains(p.Status))
                 errors.Add($"{who}: status '{p.Status}' must be one of {string.Join(", ", ProjectStatuses.All)}.");
             if (!ProjectInferenceModes.All.Contains(p.InferenceMode))

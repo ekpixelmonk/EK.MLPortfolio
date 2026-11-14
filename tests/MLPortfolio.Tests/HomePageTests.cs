@@ -55,8 +55,27 @@ public class HomePageTests(WebApplicationFactory<Program> factory) : IClassFixtu
         var html = await GetHomeAsync();
 
         Assert.Contains("Coming soon", html);
-        Assert.Contains("data-tag=\"classification\"", html);
+        Assert.Contains("data-kind=\"tag\" data-value=\"classification\"", html);
         Assert.Contains("id=\"project-search\"", html);
+    }
+
+    [Fact]
+    public async Task Home_ShowsFinanceDomainPill_ButNoCybersecurityOrNsePill()
+    {
+        var html = await GetHomeAsync();
+
+        Assert.Contains("data-kind=\"domain\" data-value=\"finance\"", html);
+        Assert.DoesNotContain("data-value=\"cybersecurity\"", html);
+        Assert.DoesNotContain("data-value=\"nse\"", html);
+    }
+
+    [Fact]
+    public async Task Home_TagsFlagshipCardWithItsDomain()
+    {
+        var html = await GetHomeAsync();
+
+        Assert.Contains("data-domain=\"finance\"", html);
+        Assert.Contains("class=\"domain-label\">Finance<", html);
     }
 
     [Fact]

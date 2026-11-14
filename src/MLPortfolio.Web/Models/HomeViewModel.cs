@@ -4,4 +4,5 @@ public sealed record HomeViewModel(
     SiteOptions Site,
     IReadOnlyList<ProjectMeta> Flagship,
     IReadOnlyList<ProjectMeta> Zoo,
+    IReadOnlyList<string> Domains,
     IReadOnlyList<string> Tags);

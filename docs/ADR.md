@@ -24,6 +24,7 @@ Living technical record for ML Portfolio. Companion to [SPEC.md](../SPEC.md): th
 | [010](#adr-010-fail-fast-immutable-projectcatalog) | Fail-fast, immutable `ProjectCatalog` | Accepted | 1 |
 | [011](#adr-011-site-owner-settings-in-configuration) | Site owner settings in configuration | Accepted | 1 |
 | [012](#adr-012-theme-before-first-paint-client-side-filtering-no-jquery) | Theme before first paint; client-side filtering; no jQuery | Accepted | 1 |
+| [013](#adr-013-domain-classification-for-flagship-projects) | Domain classification for flagship projects | Accepted | 1 |
 
 ---
 
@@ -115,6 +116,13 @@ Living technical record for ML Portfolio. Companion to [SPEC.md](../SPEC.md): th
   - Tag filter and search are vanilla JS over server-rendered cards (`data-tags`, `data-search`), with `aria-pressed` on chips and a polite live region announcing counts.
   - The template's jQuery and scoped-CSS references were removed; Bootstrap's bundle remains for later components.
 - **Consequences:** + fast, no framework, works without a build step. − an inline script will need a CSP nonce or hash when security headers are added in Phase 6.
+
+## ADR-013: Domain classification for flagship projects
+
+- **Status:** Accepted · **Phase:** 1 (follow-up change)
+- **Context:** Flagship projects can span subject areas (finance now, cybersecurity planned). Filtering by a narrow tag like "NSE" doesn't scale to that.
+- **Decision:** `projects.json` gets a `domain` field. Allowed values are a closed set in `ProjectDomains` (`finance`, `cybersecurity`), required for flagship projects and optional for Model Zoo. The homepage shows a pill per domain *that a project actually uses*, ahead of the tag pills, and a domain label on the card. The old `NSE` tag was removed in favour of the Finance domain. `disclaimer` stays a separate field (ADR-009).
+- **Consequences:** + a new domain is one line in `ProjectDomains` plus a project using it; no empty pills, so Cybersecurity stays hidden until it has a project. − domains are code, not data, so adding one needs a rebuild.
 
 ---
 

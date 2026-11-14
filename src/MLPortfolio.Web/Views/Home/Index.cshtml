@@ -14,11 +14,15 @@
     <h2 id="projects-heading" class="visually-hidden">Projects</h2>
 
     <div class="filter-bar">
-        <div class="chips" role="group" aria-label="Filter by tag">
-            <button type="button" class="chip is-active" data-tag="" aria-pressed="true">All</button>
+        <div class="chips" role="group" aria-label="Filter by domain or tag">
+            <button type="button" class="chip is-active" data-kind="all" data-value="" aria-pressed="true">All</button>
+            @foreach (var domain in Model.Domains)
+            {
+                <button type="button" class="chip chip-domain" data-kind="domain" data-value="@domain" aria-pressed="false">@ProjectDomains.LabelFor(domain)</button>
+            }
             @foreach (var tag in Model.Tags)
             {
-                <button type="button" class="chip" data-tag="@tag.ToLowerInvariant()" aria-pressed="false">@tag</button>
+                <button type="button" class="chip" data-kind="tag" data-value="@tag.ToLowerInvariant()" aria-pressed="false">@tag</button>
             }
         </div>
         <label class="visually-hidden" for="project-search">Search projects</label>

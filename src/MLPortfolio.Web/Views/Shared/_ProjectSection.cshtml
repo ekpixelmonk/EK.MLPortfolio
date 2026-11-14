@@ -7,8 +7,9 @@
         <div class="project-grid">
             @foreach (var p in Model.Projects)
             {
-                var searchText = string.Join(' ', new[] { p.Title, p.Summary }.Concat(p.Tags)).ToLowerInvariant();
+                var searchText = string.Join(' ', new[] { p.Title, p.Summary, p.DomainLabel }.OfType<string>().Concat(p.Tags)).ToLowerInvariant();
                 <article class="project-card"
+                         data-domain="@p.Domain"
                          data-tags="@string.Join('|', p.Tags.Select(t => t.ToLowerInvariant()))"
                          data-search="@searchText">
                     <div class="project-thumb">
@@ -18,7 +19,13 @@
                         }
                     </div>
                     <div class="project-body">
-                        <span class="status status-@p.Status">@p.StatusLabel</span>
+                        <div class="badges">
+                            <span class="status status-@p.Status">@p.StatusLabel</span>
+                            @if (p.DomainLabel is not null)
+                            {
+                                <span class="domain-label">@p.DomainLabel</span>
+                            }
+                        </div>
                         <h4 class="project-title">
                             <a class="stretched-link" href="@Url.Content("~/projects/" + p.Slug)">@p.Title</a>
                         </h4>

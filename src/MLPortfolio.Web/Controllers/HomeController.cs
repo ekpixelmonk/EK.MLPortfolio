@@ -14,6 +14,7 @@ public class HomeController(IProjectCatalog catalog, IOptions<SiteOptions> site)
             site.Value,
             catalog.InCategory(ProjectCategories.Flagship),
             catalog.InCategory(ProjectCategories.Zoo),
+            catalog.Domains,
             catalog.Tags);
         return View(model);
     }
