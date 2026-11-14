@@ -66,3 +66,6 @@ __pycache__/
 
 # Brainstorming visual companion (mockups)
 .superpowers/
+
+# Third-party market data downloaded by train.py (Yahoo Finance terms do not allow redistribution)
+ml/*/data/

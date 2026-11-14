@@ -12,6 +12,7 @@ dependencies = [
     "onnx>=1.16",
     "onnxruntime>=1.19",
     "matplotlib>=3.9",
+    "yfinance>=1.8.0",
 ]
 
 [dependency-groups]

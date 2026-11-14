@@ -34,17 +34,19 @@
     "slug": "linear-regression",
     "title": "Linear Regression",
     "category": "zoo",
-    "summary": "Predicts a stock's daily return from the market's move, its sector's move and trading volume.",
+    "summary": "Predicts Reliance Industries' daily return from the Nifty 50, the Nifty Energy index and trading volume, using real Yahoo Finance prices.",
     "tags": ["regression", "linear models", "stock returns"],
     "status": "live",
     "inferenceMode": "onnx",
     "disclaimer": "finance",
     "thumbnail": "charts/thumbnail.png",
     "charts": [
-      { "file": "predicted-vs-actual.png", "caption": "Predicted against actual daily returns on held-out data." },
-      { "file": "residuals.png", "caption": "Residuals show no pattern, which suggests a straight line is a reasonable fit." },
-      { "file": "coefficients.png", "caption": "Learned coefficients: the market return coefficient is the stock's beta." },
-      { "file": "residual-distribution.png", "caption": "Residuals are roughly bell-shaped and centred on zero." }
+      { "file": "price-history.png", "caption": "The three closing-price series from Yahoo Finance, rebased to 100. Reliance has tracked the Nifty 50 with more swing." },
+      { "file": "outliers.png", "caption": "Daily Reliance return against the Nifty 50 return. Red circles are stock-specific outliers that were kept; orange crosses are crash and election-day moves outside the form's range." },
+      { "file": "predicted-vs-actual.png", "caption": "Predicted against actual daily returns on the most recent 25% of days." },
+      { "file": "residuals.png", "caption": "Residuals slope downward: the model over-predicts large moves in the recent period." },
+      { "file": "coefficients.png", "caption": "Learned coefficients: the sector index takes most of the weight because it contains Reliance itself." },
+      { "file": "residual-distribution.png", "caption": "Residuals are centred near zero with a few large stock-specific misses in the tails." }
     ],
     "order": 2
   },

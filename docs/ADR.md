@@ -221,6 +221,18 @@ Living technical record for ML Portfolio. Companion to [SPEC.md](../SPEC.md): th
 - **Decision:** A tag gets a filter pill only when at least two projects use it (`IProjectCatalog.SharedTags`, case-insensitive, a repeat within one project counts once). `Tags` still lists everything; card tags and the text search are unchanged, so one-off tags remain findable.
 - **Consequences:** The row is now All, Finance and five tags. Pills appear on their own as a second project adopts a tag. Alternatives not taken: collapsing pills behind a "More" toggle, or dropping tag pills entirely.
 
+## ADR-025: Linear regression on real Reliance data
+
+- **Status:** accepted.
+- **Context:** The linear-regression pilot used synthetic data with a built-in beta. It should show a real workflow: download, check for missing data and outliers, then model.
+- **Decision:**
+  - Data: Yahoo Finance via `yfinance`: `RELIANCE.NS` (target), `^NSEI` (market) and `^CNXENERGY` (sector), daily from 2015-01-01. Price returns use `Close`, which Yahoo already adjusts for bonus issues; the form's three inputs and `schema.json` are unchanged.
+  - The raw CSV is cached in git-ignored `ml/linear-regression/data/` because Yahoo's terms do not allow redistributing its data. `train.py` downloads it when missing; `--refresh` forces a new download. The notebook and the committed charts, model and fixtures are derived artefacts.
+  - Cleaning (`prepare()`): drop days where any series has no close (never forward-fill, which would invent zero returns); drop zero-volume and stale flat days; compute returns after alignment; cap volume ratio to the form's 0.2 to 4x; drop days with a market or sector move beyond +/-5% (crash and election days outside the form's range); flag but keep stock-specific outliers (robust z of the residual above 5), since they are real events. Counts are printed, charted and written up.
+  - Chronological split (earlier 75% train, latest 25% test) instead of a random one.
+  - On Windows the yfinance HTTP client ignores the system certificate store, so `train.py` builds a CA bundle from it (verification stays on).
+- **Consequences:** The honest result is weaker than the synthetic one: test R2 0.32, below a market-only fit (0.41, beta about 1.02). The Nifty Energy index contains Reliance, so it partly echoes the target, and its weight on Reliance has shrunk over time, so the earlier-years fit over-predicts recent big moves. The write-up says so. Not done: replacing the sector input with one that excludes Reliance, or dropping it (would change the form); a reasonable follow-up.
+
 ## Phase Log
 
 Record what was actually built, deviations from the spec, gotchas and follow-ups. Add one entry per phase when it completes.
@@ -340,3 +352,11 @@ Record what was actually built, deviations from the spec, gotchas and follow-ups
 - **Built:** `SiteOptions.RepoUrl/RepoBranch/CodeUrlFor/NotebookUrlFor`, view-model fields, a "View the code on GitHub" line under the form for live projects, `Site:RepoUrl` set to the configured remote, tests (placement, coming-soon, unset, override, normalisation). 144 tests pass.
 - **Not verified:** the links open real pages: `origin/main` has only the initial commit, so they 404 until the repo is pushed.
 ### Phase 6: Docker, CI, rate limiting, OpenGraph, deployment (not started)
+
+#### Linear regression on real data (complete)
+
+- **Built:** `train.py` downloads and caches Reliance, Nifty 50 and Nifty Energy prices, audits and cleans them (`prepare()`), splits chronologically, and adds a price-history and an outlier chart; new write-up, README and executed notebook (audit, feature comparison, coefficient drift). Catalog entry updated. Model, schema and fixtures regenerated; ONNX matches scikit-learn to 4.5e-07. See ADR-025.
+- **Numbers:** 2,930 raw days to 2,862 used (25 missing index closes, 1 zero volume, 1 stale, 20 warm-up, 21 beyond +/-5%; 21 volume caps; 17 outliers flagged and kept). Test R2 0.32, RMSE 1.12 against 1.36 for the mean; market-only R2 0.41.
+- **Gotchas:** yfinance (curl_cffi) failed with `CertificateVerifyError` until given a bundle built from the Windows store. A first version dropped every volume above 4x, which removed the highest-signal days; capping is better. Generating the notebook from a script needs care with `
+` inside f-strings.
+- **Follow-ups:** decide whether to replace or drop the sector input (it overlaps the target); the data cache is local only, so a fresh clone downloads on first run.

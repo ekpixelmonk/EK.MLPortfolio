@@ -136,8 +136,8 @@ public class PredictTests : IClassFixture<WebApplicationFactory<Program>>
         var body = await response.Content.ReadFromJsonAsync<JsonElement>();
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.Equal(3.1882, body.GetProperty("prediction").GetDouble(), precision: 2);
-        Assert.Equal("+3.19%", body.GetProperty("label").GetString());
+        Assert.Equal(2.248, body.GetProperty("prediction").GetDouble(), precision: 2);
+        Assert.Equal("+2.25%", body.GetProperty("label").GetString());
         Assert.Equal(JsonValueKind.Null, body.GetProperty("probabilities").ValueKind);
     }
 

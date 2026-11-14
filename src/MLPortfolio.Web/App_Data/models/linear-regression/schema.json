@@ -10,7 +10,7 @@
       "max": 5,
       "step": 0.1,
       "default": 0.5,
-      "help": "Daily return of the broad market index"
+      "help": "Daily return of the Nifty 50"
     },
     {
       "type": "number",
@@ -20,7 +20,7 @@
       "max": 5,
       "step": 0.1,
       "default": 0.4,
-      "help": "Daily return of the stock's sector index"
+      "help": "Daily return of the Nifty Energy index"
     },
     {
       "type": "number",
