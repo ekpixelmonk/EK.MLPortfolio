@@ -192,7 +192,7 @@ public class PredictTests : IClassFixture<WebApplicationFactory<Program>>
 
     [Theory]
     [InlineData("/predict/does-not-exist")]
-    [InlineData("/predict/nse-regime")]          // coming soon, inferenceMode none
+    [InlineData("/predict/nse-regime")]          // live, but inferenceMode snapshot (no form)
     public async Task UnknownOrNotLiveProject_Returns404WithJsonBody(string url)
     {
         var response = await _factory.CreateClient().PostAsync(url, Json("{}"));

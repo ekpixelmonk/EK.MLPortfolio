@@ -9,6 +9,7 @@ public class ProjectsController(
     IProjectCatalog catalog,
     ISchemaStore schemas,
     IProjectContentStore content,
+    IRegimeReadingService readings,
     IOptions<SiteOptions> site) : Controller
 {
     [HttpGet("/projects/{slug}")]
@@ -18,7 +19,12 @@ public class ProjectsController(
         var project = catalog.Find(slug);
         if (project is null) return NotFound();
 
-        var schema = project.InferenceMode == ProjectInferenceModes.None ? null : schemas.Get(project.Slug);
+        // A snapshot project has no form: its schema is only used to run the model on the stored snapshot.
+        var hasForm = project.InferenceMode is not (ProjectInferenceModes.None or ProjectInferenceModes.Snapshot);
+        var schema = hasForm ? schemas.Get(project.Slug) : null;
+        var reading = project.InferenceMode == ProjectInferenceModes.Snapshot && project.Status == ProjectStatuses.Live
+            ? readings.Get(project.Slug)
+            : null;
         var model = new ProjectPageViewModel(
             project,
             content.GetHtml(project.Slug),
@@ -26,7 +32,8 @@ public class ProjectsController(
             FormEnabled: project.Status == ProjectStatuses.Live,
             catalog.Related(project),
             site.Value.CodeUrlFor(project),
-            site.Value.NotebookUrlFor(project));
+            site.Value.NotebookUrlFor(project),
+            reading);
         return View(model);
     }
 }

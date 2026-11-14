@@ -29,6 +29,38 @@
         }
     </header>
 
+    @if (Model.Reading is { } reading)
+    {
+        <section class="reading" aria-labelledby="reading-heading">
+            <h2 id="reading-heading" class="visually-hidden">Current reading</h2>
+            <p class="reading-sentence">
+                The model predicts the current regime as:
+                <strong class="reading-label">@reading.Label</strong>
+                <span class="reading-tag">(illustrative)</span>
+            </p>
+            <p class="reading-meta">As of the market close on @reading.AsOf.ToString("d MMMM yyyy", System.Globalization.CultureInfo.InvariantCulture). A reading of that day's indicators, not a forecast.</p>
+            <ul class="reading-probs" aria-label="Probability of each regime">
+                @foreach (var (name, prob) in reading.Probabilities)
+                {
+                    <li>
+                        <span class="reading-prob-name">@name</span>
+                        <span class="reading-prob-bar" aria-hidden="true"><span style="width:@((prob * 100).ToString("0.#", System.Globalization.CultureInfo.InvariantCulture))%"></span></span>
+                        <span class="reading-prob-value">@((prob * 100).ToString("0", System.Globalization.CultureInfo.InvariantCulture))%</span>
+                    </li>
+                }
+            </ul>
+            <details class="reading-inputs">
+                <summary>The indicators behind this reading</summary>
+                <ul>
+                    @foreach (var input in reading.Inputs)
+                    {
+                        <li><span>@input.Label</span> <strong>@input.Value.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)</strong></li>
+                    }
+                </ul>
+            </details>
+        </section>
+    }
+
     <section class="page-section" aria-labelledby="summary-heading">
         <h2 id="summary-heading" class="section-title">Summary</h2>
         @if (Model.ContentHtml is not null)

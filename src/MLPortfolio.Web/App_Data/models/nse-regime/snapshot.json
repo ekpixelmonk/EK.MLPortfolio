@@ -1,0 +1,12 @@
+{
+  "asOf": "2026-11-13",
+  "features": {
+    "india_vix": 15.5,
+    "vix_vs_avg_pct": 14.69,
+    "vix_change_5d_pct": -0.51,
+    "drawdown_pct": -2.4,
+    "dist_200dma_pct": 4.28,
+    "ma50_vs_ma200_pct": -1.8,
+    "return_5d_pct": 2.27
+  }
+}

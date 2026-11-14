@@ -1,0 +1,135 @@
+{
+  "modelFile": "model.onnx",
+  "modelVersion": "1.0.0",
+  "inputs": [
+    {
+      "type": "number",
+      "name": "india_vix",
+      "label": "India VIX",
+      "min": 8,
+      "max": 60,
+      "step": 0.5,
+      "default": 16,
+      "help": "The market's expected volatility over the next 30 days (index points)"
+    },
+    {
+      "type": "number",
+      "name": "vix_vs_avg_pct",
+      "label": "VIX vs its 60-day average (%)",
+      "min": -40,
+      "max": 120,
+      "step": 1,
+      "default": 0,
+      "help": "Positive means fear is higher than it has been recently"
+    },
+    {
+      "type": "number",
+      "name": "vix_change_5d_pct",
+      "label": "VIX change over 5 days (%)",
+      "min": -40,
+      "max": 100,
+      "step": 1,
+      "default": 0,
+      "help": "How fast fear moved in the last week"
+    },
+    {
+      "type": "number",
+      "name": "drawdown_pct",
+      "label": "Nifty 200 below its 1-year high (%)",
+      "min": -60,
+      "max": 0,
+      "step": 0.5,
+      "default": -5,
+      "help": "0 means at a 1-year high; -10 means 10% below it"
+    },
+    {
+      "type": "number",
+      "name": "dist_200dma_pct",
+      "label": "Nifty 200 vs its 200-day average (%)",
+      "min": -40,
+      "max": 40,
+      "step": 0.5,
+      "default": 4,
+      "help": "Positive means above the long-term average"
+    },
+    {
+      "type": "number",
+      "name": "ma50_vs_ma200_pct",
+      "label": "50-day vs 200-day average (%)",
+      "min": -30,
+      "max": 30,
+      "step": 0.5,
+      "default": 3,
+      "help": "Positive means the medium-term average is above the long-term one"
+    },
+    {
+      "type": "number",
+      "name": "return_5d_pct",
+      "label": "Nifty 200 5-day return (%)",
+      "min": -15,
+      "max": 15,
+      "step": 0.5,
+      "default": 0.5,
+      "help": "Index change over the last 5 trading days"
+    }
+  ],
+  "outputs": {
+    "type": "classification",
+    "labels": [
+      "Calm rally",
+      "Volatile rally",
+      "Grind down",
+      "Stress"
+    ]
+  },
+  "presets": [
+    {
+      "name": "Calm market",
+      "values": {
+        "india_vix": 13,
+        "vix_vs_avg_pct": -8,
+        "vix_change_5d_pct": -2,
+        "drawdown_pct": -1,
+        "dist_200dma_pct": 8,
+        "ma50_vs_ma200_pct": 6,
+        "return_5d_pct": 1
+      }
+    },
+    {
+      "name": "Panic sell-off",
+      "values": {
+        "india_vix": 45,
+        "vix_vs_avg_pct": 60,
+        "vix_change_5d_pct": 25,
+        "drawdown_pct": -30,
+        "dist_200dma_pct": -20,
+        "ma50_vs_ma200_pct": -12,
+        "return_5d_pct": -6
+      }
+    },
+    {
+      "name": "Slow decline",
+      "values": {
+        "india_vix": 17,
+        "vix_vs_avg_pct": 2,
+        "vix_change_5d_pct": 1,
+        "drawdown_pct": -10,
+        "dist_200dma_pct": -2,
+        "ma50_vs_ma200_pct": -1,
+        "return_5d_pct": -0.5
+      }
+    },
+    {
+      "name": "Nervous rebound",
+      "values": {
+        "india_vix": 28,
+        "vix_vs_avg_pct": -10,
+        "vix_change_5d_pct": -8,
+        "drawdown_pct": -8,
+        "dist_200dma_pct": 14,
+        "ma50_vs_ma200_pct": 8,
+        "return_5d_pct": 3
+      }
+    }
+  ]
+}

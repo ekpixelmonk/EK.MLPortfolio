@@ -1,0 +1,182 @@
+[
+  {
+    "input": {
+      "india_vix": 13.0,
+      "vix_vs_avg_pct": -8.0,
+      "vix_change_5d_pct": -2.0,
+      "drawdown_pct": -1.0,
+      "dist_200dma_pct": 8.0,
+      "ma50_vs_ma200_pct": 6.0,
+      "return_5d_pct": 1.0
+    },
+    "label": "Calm rally",
+    "probabilities": {
+      "Calm rally": 0.7620378796227922,
+      "Volatile rally": 0.09663890904192084,
+      "Grind down": 0.13047841756727604,
+      "Stress": 0.010844793768010806
+    }
+  },
+  {
+    "input": {
+      "india_vix": 45.0,
+      "vix_vs_avg_pct": 60.0,
+      "vix_change_5d_pct": 25.0,
+      "drawdown_pct": -30.0,
+      "dist_200dma_pct": -20.0,
+      "ma50_vs_ma200_pct": -12.0,
+      "return_5d_pct": -6.0
+    },
+    "label": "Stress",
+    "probabilities": {
+      "Calm rally": 8.804745313661641e-07,
+      "Volatile rally": 0.003341154501084771,
+      "Grind down": 0.0015058080085865034,
+      "Stress": 0.9951521570157974
+    }
+  },
+  {
+    "input": {
+      "india_vix": 17.0,
+      "vix_vs_avg_pct": 2.0,
+      "vix_change_5d_pct": 1.0,
+      "drawdown_pct": -10.0,
+      "dist_200dma_pct": -2.0,
+      "ma50_vs_ma200_pct": -1.0,
+      "return_5d_pct": -0.5
+    },
+    "label": "Grind down",
+    "probabilities": {
+      "Calm rally": 0.06487899574735477,
+      "Volatile rally": 0.06164421193471857,
+      "Grind down": 0.686885744535682,
+      "Stress": 0.18659104778224464
+    }
+  },
+  {
+    "input": {
+      "india_vix": 28.0,
+      "vix_vs_avg_pct": -10.0,
+      "vix_change_5d_pct": -8.0,
+      "drawdown_pct": -8.0,
+      "dist_200dma_pct": 14.0,
+      "ma50_vs_ma200_pct": 8.0,
+      "return_5d_pct": 3.0
+    },
+    "label": "Volatile rally",
+    "probabilities": {
+      "Calm rally": 0.016410389316526146,
+      "Volatile rally": 0.9782845933096596,
+      "Grind down": 0.0005078295231137561,
+      "Stress": 0.00479718785070034
+    }
+  },
+  {
+    "input": {
+      "india_vix": 42.0,
+      "vix_vs_avg_pct": -33.0,
+      "vix_change_5d_pct": -37.0,
+      "drawdown_pct": -9.5,
+      "dist_200dma_pct": 7.0,
+      "ma50_vs_ma200_pct": -16.5,
+      "return_5d_pct": 7.5
+    },
+    "label": "Volatile rally",
+    "probabilities": {
+      "Calm rally": 8.006264748122278e-05,
+      "Volatile rally": 0.9960882040302727,
+      "Grind down": 8.515517455733375e-07,
+      "Stress": 0.003830881770500645
+    }
+  },
+  {
+    "input": {
+      "india_vix": 21.5,
+      "vix_vs_avg_pct": 27.0,
+      "vix_change_5d_pct": 23.0,
+      "drawdown_pct": -2.5,
+      "dist_200dma_pct": 31.5,
+      "ma50_vs_ma200_pct": -13.5,
+      "return_5d_pct": -6.5
+    },
+    "label": "Calm rally",
+    "probabilities": {
+      "Calm rally": 0.998053510269034,
+      "Volatile rally": 0.001946489520267453,
+      "Grind down": 2.0927618328679378e-10,
+      "Stress": 1.4222528492352917e-12
+    }
+  },
+  {
+    "input": {
+      "india_vix": 30.0,
+      "vix_vs_avg_pct": -39.0,
+      "vix_change_5d_pct": 3.0,
+      "drawdown_pct": -3.0,
+      "dist_200dma_pct": 27.0,
+      "ma50_vs_ma200_pct": 2.0,
+      "return_5d_pct": -0.5
+    },
+    "label": "Volatile rally",
+    "probabilities": {
+      "Calm rally": 0.17271612168315342,
+      "Volatile rally": 0.8272834807553948,
+      "Grind down": 1.335762592719016e-07,
+      "Stress": 2.6398519253499003e-07
+    }
+  },
+  {
+    "input": {
+      "india_vix": 57.0,
+      "vix_vs_avg_pct": 55.0,
+      "vix_change_5d_pct": 92.0,
+      "drawdown_pct": 0.0,
+      "dist_200dma_pct": -37.5,
+      "ma50_vs_ma200_pct": -23.0,
+      "return_5d_pct": 8.0
+    },
+    "label": "Stress",
+    "probabilities": {
+      "Calm rally": 1.6123340554852357e-11,
+      "Volatile rally": 1.5802642585344594e-08,
+      "Grind down": 2.4888347308240137e-05,
+      "Stress": 0.999975095833926
+    }
+  },
+  {
+    "input": {
+      "india_vix": 14.5,
+      "vix_vs_avg_pct": 15.0,
+      "vix_change_5d_pct": 2.0,
+      "drawdown_pct": -27.0,
+      "dist_200dma_pct": -36.0,
+      "ma50_vs_ma200_pct": -3.0,
+      "return_5d_pct": 1.5
+    },
+    "label": "Stress",
+    "probabilities": {
+      "Calm rally": 2.225749718652086e-11,
+      "Volatile rally": 1.6262164460943922e-09,
+      "Grind down": 0.44830432446951707,
+      "Stress": 0.551695673882009
+    }
+  },
+  {
+    "input": {
+      "india_vix": 14.0,
+      "vix_vs_avg_pct": 15.0,
+      "vix_change_5d_pct": 31.0,
+      "drawdown_pct": -42.0,
+      "dist_200dma_pct": -6.5,
+      "ma50_vs_ma200_pct": -5.0,
+      "return_5d_pct": -12.0
+    },
+    "label": "Grind down",
+    "probabilities": {
+      "Calm rally": 0.006314953473492819,
+      "Volatile rally": 0.006360618005777237,
+      "Grind down": 0.9859558961010261,
+      "Stress": 0.0013685324197038903
+    }
+  }
+]

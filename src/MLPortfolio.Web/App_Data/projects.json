@@ -3,13 +3,13 @@
     "slug": "nse-regime",
     "title": "NSE Market Regime Classifier",
     "category": "flagship",
-    "summary": "Classifies NIFTY market regimes using trend and volatility features.",
+    "summary": "Names the Indian market's current regime (calm rally, volatile rally, grind down or stress) from India VIX and Nifty 200 trend indicators.",
     "domain": "finance",
     "tags": ["classification", "time series"],
-    "status": "coming-soon",
-    "inferenceMode": "none",
+    "status": "live",
+    "inferenceMode": "snapshot",
     "disclaimer": "finance",
-    "thumbnail": "charts/thumbnail.svg",
+    "thumbnail": "charts/thumbnail.png",
     "order": 1
   },
   {

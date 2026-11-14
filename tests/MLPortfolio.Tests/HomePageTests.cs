@@ -70,7 +70,7 @@ public class HomePageTests(WebApplicationFactory<Program> factory) : IClassFixtu
     {
         var html = await GetHomeAsync();
 
-        Assert.Contains("Coming soon", html);
+        Assert.Contains("status-live", html);
         Assert.Contains("data-kind=\"tag\" data-value=\"classification\"", html);
         Assert.Contains("id=\"project-search\"", html);
     }
@@ -123,7 +123,7 @@ public class HomePageTests(WebApplicationFactory<Program> factory) : IClassFixtu
     [InlineData("/projects/svm/charts/thumbnail.png")]
     [InlineData("/projects/knn/charts/thumbnail.png")]
     [InlineData("/projects/naive-bayes/charts/thumbnail.png")]
-    [InlineData("/projects/nse-regime/charts/thumbnail.svg")]
+    [InlineData("/projects/nse-regime/charts/thumbnail.png")]
     public async Task StaticAssets_AreServed(string path)
     {
         var response = await _client.GetAsync(path);

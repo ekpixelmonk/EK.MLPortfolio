@@ -31,7 +31,7 @@ Each project is a card on the homepage. Clicking a card opens a project page wit
 
 - **Training side (Python):** each project lives in `ml/<slug>/` as a uv project. A notebook and `train.py` produce charts, `model.onnx`, and `schema.json`.
 - **Serving side (.NET):** the MVC app loads `projects.json`, renders cards and pages, and runs inference through `OnnxModelRunner`.
-- **Contract between the two:** `model.onnx` + `schema.json` (+ optional `lookup.json` for precomputed projects). Parity tests verify .NET output matches Python output.
+- **Contract between the two:** `model.onnx` + `schema.json` (+ optional `lookup.json` for precomputed projects, and `snapshot.json` for projects that state a reading instead of showing a form). Parity tests verify .NET output matches Python output.
 
 ```
 MLPortfolio/
@@ -108,6 +108,7 @@ Implementation notes (Phase 3):
 - A missing or broken model returns **503** `{ "error": "..." }` with no internal detail. Request bodies are limited to 16 KB and `/predict` is rate-limited per client IP (default 30 per minute, `RateLimiting:PredictPermitsPerMinute`); over the limit returns **429**.
 - Logging records slug, outcome and latency only, never input values.
 - Projects with `inferenceMode: "none"` hide the form.
+- Projects with `inferenceMode: "snapshot"` have no form and no `/predict` endpoint. `models/<slug>/snapshot.json` holds `asOf` (a date) and the model's input values for that day; the page runs the exported ONNX model on them once (cached) and states the result in a callout above the write-up: "The model predicts the current regime as: <label> (illustrative)", the date, the probability of each class and the inputs behind it. A missing or invalid snapshot, or a model that cannot run, hides the callout and never breaks the page. `train.py` rewrites `snapshot.json` from the latest data each run.
 
 ### 4.4 Metadata-driven configuration
 
@@ -181,7 +182,7 @@ Presets render as one-click example buttons above the form.
 > **v1 scope:** seven Model Zoo projects are built end to end (logistic regression, linear regression, decision tree, random forest, SVM, KNN, naive Bayes). Flagships (marked ⭐ below) appear as **Coming soon** placeholder cards until their phase starts. All other projects are backlog.
 
 ### Flagship ML (current backlog is finance/fintech; other domains welcome)
-1. ⭐ NSE market regime classifier (flagship; NIFTY universe), placeholder in v1
+1. ⭐ NSE market regime classifier (flagship; Nifty 200 and India VIX), live as a stated reading (no form)
 2. Volatility forecasting (GARCH/ML comparison)
 3. Next-day return direction classifier
 4. Anomaly detection on price/volume
@@ -224,7 +225,7 @@ Each project's data is synthetic or openly licensed; the data source is stated o
 | 2 | Generic project page, Markdown content, chart gallery, dynamic form from schema | 1–2 days ✅ done |
 | 3 | Two pilot Model Zoo projects end to end (logistic regression, linear regression), `PredictController`, parity tests | 2–3 days ✅ done |
 | 3b | Flagship placeholders: "Coming soon" cards and pages (`status: "coming-soon"`, `inferenceMode: "none"`) for the NSE regime classifier and other flagships | 0.5 day ✅ done (delivered in Phases 1–2) |
-| 4 | Flagship: NSE regime classifier (replaces its placeholder) | 3–5 days |
+| 4 | Flagship: NSE regime classifier (replaces its placeholder) | 3–5 days ✅ done (data, labels, features, EDA, model, snapshot reading; ADR-027 to ADR-031) |
 | 5 | Remaining Flagship and Model Zoo projects (repeat checklist) | ongoing; Zoo batch 1 ✅ done (decision tree, random forest, SVM, KNN, naive Bayes) |
 | 6 | Dockerfile/CI, rate limiting, OpenGraph; deployment and custom domain once hosting is chosen | 1 day |
 
@@ -245,7 +246,7 @@ Each project's data is synthetic or openly licensed; the data source is stated o
 3. ~~Separate GitHub repo per project, or subfolders in one monorepo with deep links?~~ **Decided:** start as a monorepo (hybrid later). All projects live in this repo under `ml/<slug>/` and `repoUrl`/`notebookUrl` deep-link to the folder (e.g. `.../tree/main/ml/<slug>`). Flagship projects (e.g. NSE regime classifier) may later be split into their own repos (`git filter-repo --subdirectory-filter ml/<slug>` preserves history); only the `repoUrl` changes. See §3.1 for the rules that keep this split cheap.
 4. ~~Custom domain name?~~ **Deferred:** custom domain later, with hosting.
 5. ~~Which Model Zoo project is the pilot?~~ **Decided:** two pilots: logistic regression (classification output) and linear regression (numeric output), so both output types in `schema.json` are exercised. Flagships ship as placeholders in v1.
-6. For the NSE regime classifier, form input via manual features or historical-date lookup (or both)?
+6. ~~For the NSE regime classifier, form input via manual features or historical-date lookup (or both)?~~ **Decided:** neither. No form; the page states the model's reading of the latest day ("The model predicts the current regime as: ... (illustrative)"), refreshed whenever the model is re-run on fresh data (ADR-031).
 
 ## 14. Acceptance Criteria for v1
 

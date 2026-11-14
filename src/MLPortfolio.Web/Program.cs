@@ -15,6 +15,7 @@ builder.Services.AddSingleton<IProjectCatalog>(_ =>
 builder.Services.AddSingleton<ISchemaStore, SchemaStore>();
 builder.Services.AddSingleton<IProjectContentStore, ProjectContentStore>();
 builder.Services.AddSingleton<IModelRunner, OnnxModelRunner>();
+builder.Services.AddSingleton<IRegimeReadingService, RegimeReadingService>();
 
 // Per-client limit on /predict (inference is the only expensive endpoint).
 var predictPermitsPerMinute = builder.Configuration.GetValue("RateLimiting:PredictPermitsPerMinute", 30);

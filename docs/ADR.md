@@ -387,3 +387,63 @@ Record what was actually built, deviations from the spec, gotchas and follow-ups
 
 - **Built:** a Conclusion section on logistic regression, decision tree, SVM, KNN and naive Bayes (linear regression and random forest already had one). Each states what the model showed, its main weakness, and a list of what would improve it, using that project's real results. Content only; no code change.
 - **Convention:** every Zoo write-up now ends with `## Conclusion` (closing statement, then **What would improve it:** bullets). Follow it for new models.
+
+#### NSE regime classifier: data setup (step 1)
+
+- **Built:** `ml/nse-regime/` (own uv project): `data.py` downloads Nifty 200 (`^CNX200`) and India VIX (`^INDIAVIX`) from Yahoo Finance into git-ignored `data/raw_yahoo.csv` (same system-certificate workaround and `--refresh` as the other real-data projects) and prints a quality summary: 4,724 rows from 2007-09-03, VIX from 2008-03-03, 4,581 days with both. No modelling yet; the catalog entry stays `coming-soon`.
+- **Open:** regime definition (Q6 and the labels), features, audit rules, model.
+
+## ADR-027: NSE regimes are trend x volatility, labelled by a causal rule
+
+- **Decision:** four regimes (Calm rally, Volatile rally, Grind down, Stress) from the Nifty 200's trailing 63-day return (sign) and 20-day realised volatility (above or below 18%), with a 5-day confirmation before a switch. The model classifies the *current* regime from inputs that exclude those two measurements.
+- **Why:** it is easy to explain on the site and matches history (2008, 2020 and 2022 are Stress; 2014 and 2017 are Calm rally). Fixed thresholds and the confirmation are causal, so no label uses future data. Alternatives rejected: drawdown-only Bull/Correction/Bear (ignores volatility, so VIX adds little), and an HMM or clustering (labels need interpreting and are harder to explain). Predicting the next 20 days' regime was also declined for now.
+- **Consequence:** the labels are a rule, so the classifier approximates a definition, not a discovered truth; the write-up should say so. Open: the features, the audit rules for the data, the split, and Q6 (form input mode).
+
+#### NSE regime classifier: labels (step 2)
+
+- **Built:** `ml/nse-regime/labels.py` (labels, summary, `data/regime_timeline.png`, `data/labels.csv`; `matplotlib` added). 4,661 labelled days from 2007-12-03.
+
+## ADR-028: NSE regime features come from the Nifty 200 close and India VIX only
+
+- **Decision:** seven features: `india_vix`, `vix_vs_avg_pct`, `vix_change_5d_pct`, `drawdown_pct`, `dist_200dma_pct`, `ma50_vs_ma200_pct`, `return_5d_pct`. Index features use the full index history; VIX features use only days with a VIX close (never filled), joined on days where both exist.
+- **Why:** the first proposal had eight features including a 10-day high-low range and an index volume ratio. The audit showed Yahoo has no usable range for the Nifty 200 before 2012 (high equals low on 1,006 days) and no volume before mid-2015 (zero on 1,868 days). Keeping them would have dropped 2008 to 2011, including the 2008 crash, so they were replaced by the VIX 5-day change as the fast signal. This deviates from what the user approved; flagged in the hand-over.
+- **Consequence:** 4,509 usable days (2008-06-23 to 2026-11-13). `vix_change_5d_pct` and `return_5d_pct` are weak alone (regime ranges overlap) and `return_5d_pct` partly overlaps the label rule; the write-up says so and the model step should measure what they add. Drawdown, 200-day distance and 50/200 gap are strongly correlated (0.76 to 0.89).
+
+#### NSE regime classifier: features and write-up sections (step 3)
+
+- **Built:** `ml/nse-regime/features.py` (audit, features, per-regime summary). `content/nse-regime.md` now has detailed Data (sources, audit, labels) and Features (per-feature explanation with per-regime ranges) sections ahead of the placeholder Approach/Results; the catalog entry stays `coming-soon`.
+
+## ADR-029: NSE regime model is a class-weighted logistic regression, tested walk-forward
+
+- **Decision:** evaluate with six expanding-window folds and a 63-day gap (3,864 out-of-sample days, 2011 to 2026) instead of a single split; export a logistic regression with `class_weight="balanced"` fitted on all 4,509 days. Candidates compared: plain logistic regression, random forest, gradient boosting and a majority baseline.
+- **Why:** regimes last about 45 days, so a random split leaks neighbouring days; one chronological split left only 4% Stress and 6% Volatile rally in the test set. The class-weighted logistic regression won on accuracy (69.5% vs 55.4% baseline), balanced accuracy (56.2%) and AUC (0.861), and is the most explainable. Forest and boosting did not help (few independent regime changes). I first intended the unweighted version and switched after seeing the balanced result. The choice and the reported scores use the same out-of-sample data, so the 0.7-point accuracy edge over the unweighted model is not strong evidence, but the gain in balanced accuracy (49% to 56%) is large.
+- **Consequence:** Volatile rally recall is only 15% and Stress is often read as Grind down (43%); the write-up says so. Reported scores are from the walk-forward models, not the final fit. The ONNX model, schema, charts and fixtures are written, but the catalog entry stays `coming-soon` and the model is not in `PredictTests` until it goes live.
+
+#### NSE regime classifier: model (step 4)
+
+- **Built:** `ml/nse-regime/train.py` (walk-forward evaluation, four candidates, ONNX export with an onnxruntime parity check, six charts, fixtures, schema with four presets that classify as named), and the Approach, Results, Limitations and Conclusion sections of `content/nse-regime.md`. `projects.json` is unchanged.
+- **Open:** Q6 (form input mode), then flip the entry to live (charts, `inferenceMode: onnx`, `PredictTests` slug) and check the homepage hero line.
+
+## ADR-030: Charts are embedded inline in the write-up, and the project page is wider
+
+- **Decision:** the NSE page shows its EDA and model charts inline in `content/nse-regime.md` (Markdown images with an italic caption), not only in the gallery; `.project-page` widens from 52rem to 62rem, with body text still capped at 65ch and image paragraphs and tables allowed the full width (`wwwroot/css/site.css`). Regime colours changed to green, amber, blue and red after the palette failed the colour-blind check (grey was below the chroma floor).
+- **Why:** the user wants EDA charts in the sections before the model, where the argument is made; a gallery at the bottom separates a chart from its explanation. At 52rem the charts were too small to read.
+- **Consequence:** the other project pages are 10rem wider; their text measure is unchanged. When the NSE entry goes live decide whether the gallery repeats these charts. Chart paths in Markdown are root-relative (`/projects/<slug>/charts/...`), so they assume the site is served from the root.
+
+#### NSE regime classifier: EDA and training stats (step 5)
+
+- **Built:** `ml/nse-regime/eda.py` (12 charts), `train.py --report` (training-stats tables), `labels.COLORS` changed, and `content/nse-regime.md` restructured: charts and findings added to Data and Features, a "What the exploration shows" list, a new "Model training" section (folds, settings, per-regime table, coefficients, probability quality) and the model charts inline in Results.
+- **Finding worth noting:** the exploration shows the 50/200-day gap ranks above VIX on mutual information, and that the 5-day return, VIX-vs-average and VIX 5-day change are weak alone; the coefficients of the correlated trend features partly offset each other, which the page explains.
+
+## ADR-031: The NSE flagship states a reading instead of offering a form
+
+- **Decision:** a new `inferenceMode: "snapshot"`. The NSE regime page has no form and no `/predict` endpoint. `models/nse-regime/snapshot.json` holds the latest day's seven indicator values and its `asOf` date, written by `train.py`; `Services/RegimeReadingService` validates them against `schema.json`, runs the exported ONNX model once (cached) and the page shows a callout above the write-up: "The model predicts the current regime as: <label> (illustrative)", the date, the probability of each regime and the inputs behind it. The entry is now `status: live` with the regime-timeline thumbnail. This resolves SPEC Q6.
+- **Why:** the user chose a stated reading over manual entry or a date lookup. A visitor cannot sensibly supply seven derived indicators (a drawdown from a one-year high, a 50/200-day gap), and the site has no data feed (Yahoo's terms do not allow redistributing the raw data, so there is nothing to look a date up in). A reading of the latest day keeps the page honest and in-process ONNX inference in the loop: the label on the page is produced by the shipped model, not typed in.
+- **My calls:** the callout sits above the write-up (the page is very long, and the reading is the headline), shows the probabilities and, folded away, the inputs, and is labelled "(illustrative)" and "not a forecast" next to the existing finance disclaimer. The page is only as fresh as the last `train.py` run; the date is shown for that reason. A missing or invalid snapshot, a value outside the schema ranges, or a model that cannot run hides the callout and logs a warning, never breaking the page.
+- **Consequence:** the reading is static between runs; there is no live data. The `lookup` mode is still unimplemented. `PredictTests` does not cover `nse-regime`; a page test checks the sentence, the date and the probabilities against `tests/fixtures/nse-regime-snapshot.json` (scikit-learn's answer), so the .NET ONNX run and Python agree. The homepage no longer has any "Coming soon" card.
+
+#### NSE regime classifier: go live with a stated reading (step 6)
+
+- **Built:** `snapshot` inference mode (`ProjectInferenceModes`, `RegimeReading`, `RegimeReadingService`, `ProjectsController`, `Details.cshtml`, CSS), `train.py` writes `snapshot.json` and the snapshot fixture, catalog entry live with a PNG thumbnail (placeholder SVG removed), executed `ml/nse-regime/notebook.ipynb`, and tests (150 pass): the reading matches Python, no form, a missing snapshot and a not-live entry show no callout. Existing tests that used the NSE placeholder as their coming-soon example now build their own catalog.
+- **Latest reading:** 13 November 2026: Calm rally (64%), Grind down 21%, Volatile rally 11%, Stress 4%.
+- **Follow-ups:** the homepage hero line "each with a live demo" now fits all projects; push the repo so the GitHub links resolve; decide whether the gallery should repeat the inline charts.

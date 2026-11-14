@@ -9,4 +9,6 @@ public sealed record ProjectPageViewModel(
     IReadOnlyList<ProjectMeta> Related,
     /// <summary>Resolved GitHub links (see <see cref="SiteOptions"/>); null when not available.</summary>
     string? CodeUrl = null,
-    string? NotebookUrl = null);
+    string? NotebookUrl = null,
+    /// <summary>The model's reading of the project's snapshot (<c>inferenceMode: "snapshot"</c>); null otherwise.</summary>
+    RegimeReading? Reading = null);

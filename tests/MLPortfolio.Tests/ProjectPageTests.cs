@@ -108,7 +108,13 @@ public class ProjectPageTests(WebApplicationFactory<Program> factory) : IClassFi
     [Fact]
     public async Task ComingSoonProject_HasNoCodeLink()
     {
-        var (_, html) = await GetAsync(Client(), "/projects/nse-regime");
+        var json = """
+            [{ "slug": "future-model", "title": "Future Model", "category": "zoo", "summary": "s",
+               "status": "coming-soon", "inferenceMode": "none" }]
+            """;
+        using var custom = WithCatalog(json);
+
+        var (_, html) = await GetAsync(Client(custom), "/projects/future-model");
 
         Assert.DoesNotContain("View on GitHub", html);
         Assert.DoesNotContain("code-link", html);
@@ -189,8 +195,58 @@ public class ProjectPageTests(WebApplicationFactory<Program> factory) : IClassFi
         var (_, html) = await GetAsync(Client(), "/projects/nse-regime");
 
         Assert.Contains("Educational purposes only. Not investment advice.", html);
-        Assert.DoesNotContain("Try the model", html);   // inferenceMode: none
+        Assert.DoesNotContain("Try the model", html);   // inferenceMode: snapshot (no form)
         Assert.Contains("Finance", html);
+    }
+
+    [Fact]
+    public async Task NseRegime_ShowsTheModelsReadingOfTheLatestSnapshot_MatchingPython()
+    {
+        var reference = System.Text.Json.JsonDocument.Parse(File.ReadAllText(
+            Path.Combine(AppContext.BaseDirectory, "fixtures", "nse-regime-snapshot.json"))).RootElement;
+        var label = reference.GetProperty("label").GetString()!;
+        var asOf = DateOnly.ParseExact(reference.GetProperty("asOf").GetString()!, "yyyy-MM-dd");
+
+        var (status, html) = await GetAsync(Client(), "/projects/nse-regime");
+
+        Assert.Equal(HttpStatusCode.OK, status);
+        Assert.Contains("The model predicts the current regime as:", html);
+        Assert.Contains($"<strong class=\"reading-label\">{label}</strong>", html);   // the .NET ONNX run agrees with scikit-learn
+        Assert.Contains("(illustrative)", html);
+        Assert.Contains(asOf.ToString("d MMMM yyyy", System.Globalization.CultureInfo.InvariantCulture), html);
+        foreach (var p in reference.GetProperty("probabilities").EnumerateObject())
+            Assert.Contains(p.Name, html);
+        Assert.DoesNotContain("id=\"try-form\"", html);
+    }
+
+    [Fact]
+    public async Task SnapshotProjectWithoutSnapshotFile_RendersPageWithoutReading()
+    {
+        var json = """
+            [{ "slug": "no-snapshot", "title": "No Snapshot", "category": "zoo", "summary": "s",
+               "status": "live", "inferenceMode": "snapshot" }]
+            """;
+        using var custom = WithCatalog(json);
+
+        var (status, html) = await GetAsync(Client(custom), "/projects/no-snapshot");
+
+        Assert.Equal(HttpStatusCode.OK, status);
+        Assert.DoesNotContain("current regime", html);
+        Assert.DoesNotContain("id=\"try-form\"", html);
+    }
+
+    [Fact]
+    public async Task NotLiveSnapshotProject_ShowsNoReading()
+    {
+        var json = """
+            [{ "slug": "nse-regime", "title": "NSE", "category": "zoo", "summary": "s",
+               "status": "coming-soon", "inferenceMode": "snapshot" }]
+            """;
+        using var custom = WithCatalog(json);
+
+        var (_, html) = await GetAsync(Client(custom), "/projects/nse-regime");
+
+        Assert.DoesNotContain("The model predicts the current regime as:", html);
     }
 
     [Theory]

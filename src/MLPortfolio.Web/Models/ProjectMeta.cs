@@ -71,6 +71,8 @@ public static class ProjectInferenceModes
 {
     public const string Onnx = "onnx";
     public const string Lookup = "lookup";
+    /// <summary>No form: the page states the model's reading of a stored snapshot of inputs (<c>snapshot.json</c>).</summary>
+    public const string Snapshot = "snapshot";
     public const string None = "none";
-    public static readonly IReadOnlySet<string> All = new HashSet<string> { Onnx, Lookup, None };
+    public static readonly IReadOnlySet<string> All = new HashSet<string> { Onnx, Lookup, Snapshot, None };
 }

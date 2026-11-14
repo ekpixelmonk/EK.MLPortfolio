@@ -1,0 +1,10 @@
+{
+  "asOf": "2026-11-13",
+  "label": "Calm rally",
+  "probabilities": {
+    "Calm rally": 0.6401768113278086,
+    "Volatile rally": 0.11078867524611394,
+    "Grind down": 0.21088610927754803,
+    "Stress": 0.03814840414852959
+  }
+}
