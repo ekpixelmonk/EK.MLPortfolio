@@ -63,7 +63,7 @@ public class PredictController(
             var unit = schema.Outputs.Unit ?? "";
             return new PredictResponse(
                 value,
-                Label: value.ToString("+0.00;-0.00;0.00", CultureInfo.InvariantCulture) + unit,
+                Label: value.ToString(schema.Outputs.Signed ? "+0.00;-0.00;0.00" : "0.00", CultureInfo.InvariantCulture) + unit,
                 Probabilities: null,
                 Explanation: $"For these inputs the model predicts {value.ToString("0.00", CultureInfo.InvariantCulture)}{unit}.",
                 schema.ModelVersion);

@@ -17,3 +17,15 @@ On the held-out 25%, the model reaches **71.9% accuracy** and an ROC AUC of 0.79
 ## Limitations
 
 The data is synthetic and the churn rule is invented. Naive Bayes ranks customers better than it estimates probabilities, so treat the percentage as a score. Educational purposes only.
+
+## Conclusion
+
+Naive Bayes is a fast, simple baseline for customer churn, and here it is a modest one: 71.9% accuracy against 65.4% for always predicting "Stays", with an ROC AUC of 0.79. It ranks customers better than it estimates probabilities. The calibration chart shows the typical result: the percentages are over-confident, because the model treats age, balance, products, tenure and activity as independent when they are not. Treat its output as a score for ordering customers, not as a literal chance of leaving.
+
+**What would improve it:**
+
+- **Calibrating the probabilities.** Platt or isotonic calibration would fix the over-confidence without changing the ranking.
+- **Better-suited distributions.** Gaussian bell curves fit "products held" (a small count) and a skewed balance poorly. Transforming those inputs (for example the log of the balance) or treating counts as categories would help.
+- **Reducing the independence problem.** Combining or dropping strongly related inputs, or moving to a model that handles correlation, such as logistic regression, would remove its main assumption.
+- **A stronger comparison.** Logistic regression and gradient boosting are the natural benchmarks; naive Bayes is worth keeping only if its speed or simplicity matters.
+- **Real data.** The churn rule here is invented, and real churn depends on events (a price change, a service failure) that these inputs cannot see.

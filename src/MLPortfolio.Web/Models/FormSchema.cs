@@ -39,6 +39,9 @@ public sealed record SchemaOutputs
     public string Type { get; init; } = "";
     public IReadOnlyList<string> Labels { get; init; } = [];
     public string? Unit { get; init; }
+
+    /// <summary>Regression only. Show an explicit + or - sign (right for returns, wrong for volatility). Defaults to true.</summary>
+    public bool Signed { get; init; } = true;
 }
 
 public sealed record SchemaPreset

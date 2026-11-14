@@ -4,76 +4,128 @@
   "inputs": [
     {
       "type": "number",
-      "name": "beta",
-      "label": "Beta (market sensitivity)",
-      "min": 0.2,
-      "max": 2.5,
-      "step": 0.05,
-      "default": 1.0,
-      "help": "How strongly the stock moves with the market"
+      "name": "vol_5d_pct",
+      "label": "5-day volatility (%)",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 20,
+      "help": "Annualised daily high-low range volatility of Reliance over the last 5 days"
     },
     {
       "type": "number",
-      "name": "debt_to_equity",
-      "label": "Debt-to-equity ratio",
-      "min": 0,
+      "name": "vol_20d_pct",
+      "label": "20-day volatility (%)",
+      "min": 5,
+      "max": 80,
+      "step": 1,
+      "default": 22,
+      "help": "The same measure over the last 20 days"
+    },
+    {
+      "type": "number",
+      "name": "vol_60d_pct",
+      "label": "60-day volatility (%)",
+      "min": 10,
+      "max": 80,
+      "step": 1,
+      "default": 22,
+      "help": "The same measure over the last 60 days; the forecast is built around this level"
+    },
+    {
+      "type": "number",
+      "name": "return_20d_pct",
+      "label": "20-day return (%)",
+      "min": -25,
+      "max": 30,
+      "step": 0.5,
+      "default": 1,
+      "help": "Price change over the last 20 trading days"
+    },
+    {
+      "type": "number",
+      "name": "drawdown_pct",
+      "label": "Below 6-month high (%)",
+      "min": -40,
+      "max": 0,
+      "step": 0.5,
+      "default": -8,
+      "help": "0 means at the highest close of the last six months; -10 means 10% below it"
+    },
+    {
+      "type": "number",
+      "name": "volume_ratio",
+      "label": "Recent volume vs normal (x)",
+      "min": 0.2,
       "max": 4,
       "step": 0.1,
-      "default": 0.8
+      "default": 1.0,
+      "help": "Average volume of the last 5 days against the 60 days before them"
     },
     {
       "type": "number",
-      "name": "market_cap_bn",
-      "label": "Market cap (billions)",
-      "min": 1,
-      "max": 500,
+      "name": "market_vol_20d_pct",
+      "label": "Market 20-day volatility (%)",
+      "min": 4,
+      "max": 60,
       "step": 1,
-      "default": 40
+      "default": 11,
+      "help": "Annualised 20-day volatility of the Nifty 50"
     },
     {
-      "type": "select",
-      "name": "sector",
-      "label": "Sector",
-      "options": [
-        "technology",
-        "banks",
-        "utilities",
-        "energy",
-        "healthcare"
-      ],
-      "default": "technology"
+      "type": "number",
+      "name": "india_vix",
+      "label": "India VIX",
+      "min": 8,
+      "max": 60,
+      "step": 0.5,
+      "default": 15,
+      "help": "The market's expected volatility over the next 30 days (index points)"
     }
   ],
   "outputs": {
     "type": "regression",
-    "unit": "%"
+    "unit": "%",
+    "signed": false
   },
   "presets": [
     {
-      "name": "Steady utility",
+      "name": "Calm market",
       "values": {
-        "beta": 0.5,
-        "debt_to_equity": 1.2,
-        "market_cap_bn": 60,
-        "sector": "utilities"
+        "vol_5d_pct": 12,
+        "vol_20d_pct": 15,
+        "vol_60d_pct": 18,
+        "return_20d_pct": 2,
+        "drawdown_pct": -3,
+        "volume_ratio": 0.8,
+        "market_vol_20d_pct": 8,
+        "india_vix": 11
       }
     },
     {
-      "name": "Volatile small-cap tech",
+      "name": "After a sharp sell-off",
       "values": {
-        "beta": 1.8,
-        "debt_to_equity": 2.5,
-        "market_cap_bn": 4,
-        "sector": "technology"
+        "vol_5d_pct": 45,
+        "vol_20d_pct": 38,
+        "vol_60d_pct": 28,
+        "return_20d_pct": -15,
+        "drawdown_pct": -25,
+        "volume_ratio": 2.5,
+        "market_vol_20d_pct": 35,
+        "india_vix": 38
       }
     },
     {
-      "name": "Large-cap bank",
+      "name": "Stock-specific shock",
       "values": {
-        "beta": 1.1,
-        "debt_to_equity": 0.9,
-        "market_cap_bn": 220,
-        "sector": "banks"
+        "vol_5d_pct": 60,
+        "vol_20d_pct": 25,
+        "vol_60d_pct": 22,
+        "return_20d_pct": 8,
+        "drawdown_pct": -4,
+        "volume_ratio": 3.5,
+        "market_vol_20d_pct": 11,
+        "india_vix": 14
       }
     }
   ]

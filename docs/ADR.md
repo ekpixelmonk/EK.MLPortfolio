@@ -234,6 +234,19 @@ Living technical record for ML Portfolio. Companion to [SPEC.md](../SPEC.md): th
   - The sector input (Nifty Energy, `^CNXENERGY`) was tried first and dropped. The index is dominated by Reliance, so its return partly echoes the target (R2 0.62 on its own in training), and its coefficient drifted from 1.43 (2016-17) to 0.36 (2024-25) as weights were capped. Test R2 was 0.32, below a market-only fit (0.41).
 - **Consequences:** With market and volume only, test R2 is 0.42 (RMSE 1.06 vs 1.39 for the mean), beta about 1.07 and stable across two-year windows (0.9 to 1.2). Volume adds almost nothing (market-only 0.42). The form has two inputs; presets, schema and fixtures were regenerated. Residuals are heavy-tailed (stock-specific days), which a market-only linear model cannot explain.
 
+## ADR-026: Random forest forecasts Reliance volatility
+
+- **Status:** accepted.
+- **Context:** The random forest used synthetic stock data. It should use real Reliance data like the linear regression, and the two projects must stay independent (no imports across `ml/` folders).
+- **Decision:**
+  - Task: forecast Reliance's annualised volatility over the next 20 trading days from eight inputs known at the close: Parkinson (high-low range) volatility over 5, 20 and 60 days, 20-day return, drawdown from the 6-month high, recent volume ratio, Nifty 50 20-day volatility and India VIX (`^INDIAVIX`).
+  - Independence: the download, certificate handling, cache and `prepare()` audit are copied into `ml/random-forest/train.py` (about 50 lines) rather than shared. A shared package would need its own versioning and break the "self-contained uv project" rule; the cost of duplication is small. Same cache rule as ADR-025: `data/` is git-ignored.
+  - Cleaning: drop days where the index or VIX has no close, zero volume, or a zero/inverted high-low range; never forward-fill. Outliers are flagged but kept (for volatility the extreme days are the signal). Features are capped at the form ranges.
+  - Target: `log(next-20-day volatility / 60-day volatility)`. Predicting the level directly failed: the training years include the 2020 crash, the test years are calm, and a forest cannot predict outside what it has seen (RMSE 9.0 against 5.9 for the training average). The ONNX graph appends `Exp` and a multiply by the `vol_60d_pct` input so the runner still receives a percentage; no .NET change.
+  - Evaluation: chronological split with a 20-day gap (targets look 20 days ahead); forest depth and leaf size chosen by `TimeSeriesSplit` on the training data only (depth 3, 80 per leaf). Baselines: training average, last-20 and last-60-day volatility, linear regression.
+  - Close-to-close volatility, VIX-as-feature and a raw level target were all tried first; range-based volatility and the ratio target made the difference.
+- **Consequences:** Test RMSE 3.93 points (MAE 3.12): about 8% better than repeating last 20 days (4.26), a statistical tie with linear regression (3.86). R2 is negative for every method (calm test period), so the write-up leads with RMSE/MAE. The form has eight inputs that must be computed the same way as in training; the write-up says so. Added `outputs.signed` (default true) to `schema.json` so a volatility prints as `26.20%`, not `+26.20%`. The forest effectively ignores India VIX.
+
 ## Phase Log
 
 Record what was actually built, deviations from the spec, gotchas and follow-ups. Add one entry per phase when it completes.
@@ -362,3 +375,15 @@ Record what was actually built, deviations from the spec, gotchas and follow-ups
 ` inside f-strings.
 - **Write-up:** ends with a Conclusion (closing statement plus what would improve the model: lagged inputs, a sector index without Reliance, time-varying volatility, event-day handling, more stocks). Other Zoo write-ups do not have one yet.
 - **Follow-ups:** the data cache is local only, so a fresh clone downloads on first run.
+
+#### Random forest on real data (complete)
+
+- **Built:** `ml/random-forest/train.py` rewritten: own Yahoo download and audit (Reliance, Nifty 50, India VIX), Parkinson volatility features, log-ratio target, ONNX graph with `Exp` and a multiply appended, time-series grid search, baselines, permutation importance and six new charts; new write-up with a Conclusion, README and executed notebook (including a level-vs-ratio target comparison). Catalog entry, schema (8 inputs), presets and fixtures regenerated. See ADR-026.
+- **Numbers:** 2,930 raw days to 2,758 used (26 missing index/VIX closes, 1 zero volume, 145 warm-up/horizon; 20 outliers flagged and kept; 75 feature values capped). Test RMSE 3.93, MAE 3.12 against 4.26 / 3.18 (last 20 days) and 3.86 / 3.18 (linear). ONNX matches scikit-learn to 2.6e-06.
+- **Gotchas:** forests lost to every baseline until the target became a ratio; the first run (close-to-close volatility, raw level target) scored R2 -3.6. A running dev server locks the exe for `dotnet test`. Re-serialising `projects.json` with `json.dump` reformats the whole file; edit the entry as text. Another heredoc with apostrophes broke; use the editor tool for files with quotes.
+- **Follow-ups:** train on many NSE stocks (the real fix for the lack of independent episodes); stronger volatility baselines (HAR/GARCH); ~~Conclusion sections for the other Zoo write-ups~~ (done, below).
+
+#### Conclusion sections on every write-up (complete)
+
+- **Built:** a Conclusion section on logistic regression, decision tree, SVM, KNN and naive Bayes (linear regression and random forest already had one). Each states what the model showed, its main weakness, and a list of what would improve it, using that project's real results. Content only; no code change.
+- **Convention:** every Zoo write-up now ends with `## Conclusion` (closing statement, then **What would improve it:** bullets). Follow it for new models.

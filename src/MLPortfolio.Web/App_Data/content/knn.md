@@ -17,3 +17,16 @@ On the held-out 25%, the model reaches **85.3% accuracy** and a one-vs-rest ROC 
 ## Limitations
 
 The clusters are invented, and real stocks do not fall into three tidy groups. KNN stores the whole training set, so it slows down on large data. Not investment advice. Educational purposes only.
+
+## Conclusion
+
+K-nearest neighbours classifies stocks as Value, Growth or Income well: 85.3% accuracy and a one-vs-rest AUC of 0.95, against 37.9% for always guessing the largest class. It works because the problem suits it: three features, on comparable scales after standardising, and groups that are close together. Growth is easy to separate, and the mistakes are mostly between Value and Income, where the clusters overlap. The k chart shows the standard trade-off: k = 1 memorises noise, and a moderate k generalises.
+
+Its weaknesses are practical: it keeps the whole training set, every prediction searches it, and it is only as good as its notion of "similar", which depends entirely on how the features are scaled.
+
+**What would improve it:**
+
+- **Tuning k and the weighting.** Choosing k by cross-validation, and weighting closer neighbours more, usually gives a small but reliable gain.
+- **Better distance.** More informative features (profitability, sector, size) would help, but only if scaled sensibly; a learned distance or a different model could do better still.
+- **Scale.** For large datasets an approximate nearest-neighbour index keeps predictions fast.
+- **Real data.** Real stocks do not fall into three tidy clusters, and what counts as Value or Growth changes with the market cycle, so the labels themselves would need care.

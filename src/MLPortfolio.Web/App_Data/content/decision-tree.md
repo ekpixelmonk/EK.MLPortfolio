@@ -17,3 +17,16 @@ On the held-out 25%, the tree reaches **93.2% accuracy** and an ROC AUC of 0.93,
 ## Limitations
 
 The "rules" are invented, so the tree rediscovers a rule of thumb, not real lending policy. Single trees are unstable: a small change in the data can reshuffle the questions. A real credit decision would also need fairness checks. Educational purposes only.
+
+## Conclusion
+
+The decision tree rediscovered the lending rule of thumb that generated the data, scoring 93.2% against 55.7% for always guessing "Rejected", and it did so with a model anyone can read and explain to an applicant. That is its real selling point: the questions it asks (credit score, loan size relative to income) are exactly the ones a loan officer would ask. The depth chart is the main caution: a deeper tree fits the training data better but only memorises its noise, so a shallow tree was the right choice.
+
+A single tree is also unstable. A small change in the data can reshuffle the questions, so the neat rules should be treated as one reasonable reading of the data, not the truth.
+
+**What would improve it:**
+
+- **An ensemble.** A random forest or gradient boosting model averages many trees and is far steadier, at the cost of the readable rules. It is the usual next step when accuracy matters more than explanation.
+- **Pruning and cross-validation.** Choosing the depth and leaf size by cross-validation, or by cost-complexity pruning, is more reliable than fixing them by hand.
+- **Constraints that match policy.** For lending, monotonic constraints (a higher credit score can never lower approval) keep the rules sensible.
+- **Real data and fairness checks.** The rules here are invented; a real tree would need real decisions and a review of who it approves and rejects.

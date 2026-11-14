@@ -72,17 +72,19 @@
     "slug": "random-forest",
     "title": "Random Forest",
     "category": "zoo",
-    "summary": "Predicts a stock's 30-day volatility from beta, leverage, size and sector with an ensemble of decision trees.",
+    "summary": "Forecasts Reliance Industries' next-month volatility from recent volatility, India VIX and price action, using real Yahoo Finance data.",
     "tags": ["regression", "trees", "volatility"],
     "status": "live",
     "inferenceMode": "onnx",
     "disclaimer": "finance",
     "thumbnail": "charts/thumbnail.png",
     "charts": [
-      { "file": "predicted-vs-actual.png", "caption": "Predicted against actual volatility on held-out stocks." },
-      { "file": "feature-importance.png", "caption": "Which inputs the forest relies on most to predict volatility." },
-      { "file": "forest-vs-linear.png", "caption": "Same data, same inputs: the forest captures effects a straight line misses." },
-      { "file": "beta-by-sector.png", "caption": "Predicted volatility as beta rises, other inputs held typical. The slope differs by sector." }
+      { "file": "volatility-history.png", "caption": "Reliance's 20-day range-based volatility next to India VIX. The spikes are real (March 2020, the 2024 election result, single-day shocks); red circles mark stock-specific outlier days, which were kept." },
+      { "file": "forecast-timeline.png", "caption": "The forest's forecast against what happened over the next 20 days, on the most recent days held out from training. It tracks the broad level but cannot foresee sudden shocks." },
+      { "file": "predicted-vs-actual.png", "caption": "Predicted against actual 20-day volatility on the test period. Forecasts are compressed towards the middle: the extremes are not predicted." },
+      { "file": "model-comparison.png", "caption": "Test-period error for five forecasts. Simply carrying today's volatility forward is a hard baseline to beat; the forest and a straight line both do a little better." },
+      { "file": "feature-importance.png", "caption": "Which inputs the forest relies on, measured by how much accuracy falls when each is scrambled. The 60-day level anchors the forecast; bars below zero are inputs that add noise on the test period." },
+      { "file": "spike-effect.png", "caption": "Predicted volatility as the last 20 days get more volatile, other inputs held at typical values. Both models stay close to the 60-day level instead of carrying a spike forward, which is why simply repeating the last 20 days does worse." }
     ],
     "order": 4
   },

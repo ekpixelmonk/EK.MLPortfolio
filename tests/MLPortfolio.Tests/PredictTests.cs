@@ -142,6 +142,19 @@ public class PredictTests : IClassFixture<WebApplicationFactory<Program>>
     }
 
     [Fact]
+    public async Task Regression_UnsignedSchema_OmitsPlusSign()
+    {
+        var json = """{ "vol_5d_pct": 12, "vol_20d_pct": 15, "vol_60d_pct": 18, "return_20d_pct": 2, "drawdown_pct": -3, "volume_ratio": 0.8, "market_vol_20d_pct": 8, "india_vix": 11 }""";
+
+        var response = await _factory.CreateClient().PostAsync("/predict/random-forest", Json(json));
+        var body = await response.Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.DoesNotContain("+", body.GetProperty("label").GetString());
+        Assert.EndsWith("%", body.GetProperty("label").GetString());
+    }
+
+    [Fact]
     public async Task InvalidInput_Returns400WithPerFieldErrors()
     {
         var json = """{ "annual_income_k": 5000, "debt_to_income_pct": "high", "credit_history_years": 3, "late_payments_12m": 0, "employment": "pirate" }""";

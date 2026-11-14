@@ -1,7 +1,7 @@
 [project]
 name = "random-forest"
 version = "0.1.0"
-description = "Stock volatility regressor (random forest) on synthetic data, exported to ONNX for the ML Portfolio site."
+description = "Reliance volatility forecast (random forest) on real Yahoo Finance data, exported to ONNX for the ML Portfolio site."
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
 dependencies = [
@@ -12,6 +12,7 @@ dependencies = [
     "onnx>=1.16",
     "onnxruntime>=1.19",
     "matplotlib>=3.9",
+    "yfinance>=1.8.0",
 ]
 
 [dependency-groups]

@@ -1,83 +1,119 @@
 [
   {
     "input": {
-      "beta": 0.5,
-      "debt_to_equity": 1.2,
-      "market_cap_bn": 60.0,
-      "sector": "utilities"
+      "vol_5d_pct": 12.0,
+      "vol_20d_pct": 15.0,
+      "vol_60d_pct": 18.0,
+      "return_20d_pct": 2.0,
+      "drawdown_pct": -3.0,
+      "volume_ratio": 0.8,
+      "market_vol_20d_pct": 8.0,
+      "india_vix": 11.0
     },
-    "prediction": 5.952482899479221
+    "prediction": 19.16236979644271
   },
   {
     "input": {
-      "beta": 1.8,
-      "debt_to_equity": 2.5,
-      "market_cap_bn": 4.0,
-      "sector": "technology"
+      "vol_5d_pct": 45.0,
+      "vol_20d_pct": 38.0,
+      "vol_60d_pct": 28.0,
+      "return_20d_pct": -15.0,
+      "drawdown_pct": -25.0,
+      "volume_ratio": 2.5,
+      "market_vol_20d_pct": 35.0,
+      "india_vix": 38.0
     },
-    "prediction": 35.98934054203149
+    "prediction": 26.2034807549039
   },
   {
     "input": {
-      "beta": 1.1,
-      "debt_to_equity": 0.9,
-      "market_cap_bn": 220.0,
-      "sector": "banks"
+      "vol_5d_pct": 60.0,
+      "vol_20d_pct": 25.0,
+      "vol_60d_pct": 22.0,
+      "return_20d_pct": 8.0,
+      "drawdown_pct": -4.0,
+      "volume_ratio": 3.5,
+      "market_vol_20d_pct": 11.0,
+      "india_vix": 14.0
     },
-    "prediction": 17.8263686528987
+    "prediction": 22.713982090841288
   },
   {
     "input": {
-      "beta": 1.7000000000000002,
-      "debt_to_equity": 0.2,
-      "market_cap_bn": 11.0,
-      "sector": "banks"
+      "vol_5d_pct": 65.0,
+      "vol_20d_pct": 8.0,
+      "vol_60d_pct": 11.0,
+      "return_20d_pct": 21.0,
+      "drawdown_pct": -16.5,
+      "volume_ratio": 1.1,
+      "market_vol_20d_pct": 46.0,
+      "india_vix": 21.5
     },
-    "prediction": 26.095377655413184
+    "prediction": 11.90217015051489
   },
   {
     "input": {
-      "beta": 1.55,
-      "debt_to_equity": 0.9,
-      "market_cap_bn": 376.0,
-      "sector": "healthcare"
+      "vol_5d_pct": 42.0,
+      "vol_20d_pct": 39.0,
+      "vol_60d_pct": 77.0,
+      "return_20d_pct": 24.0,
+      "drawdown_pct": -29.0,
+      "volume_ratio": 1.3,
+      "market_vol_20d_pct": 28.0,
+      "india_vix": 8.0
     },
-    "prediction": 20.075340802118497
+    "prediction": 56.97985380626478
   },
   {
     "input": {
-      "beta": 0.8,
-      "debt_to_equity": 1.7000000000000002,
-      "market_cap_bn": 226.0,
-      "sector": "technology"
+      "vol_5d_pct": 31.0,
+      "vol_20d_pct": 76.0,
+      "vol_60d_pct": 69.0,
+      "return_20d_pct": 4.5,
+      "drawdown_pct": -20.5,
+      "volume_ratio": 3.8000000000000003,
+      "market_vol_20d_pct": 37.0,
+      "india_vix": 57.0
     },
-    "prediction": 18.257494927743537
+    "prediction": 52.51494275655445
   },
   {
     "input": {
-      "beta": 2.25,
-      "debt_to_equity": 1.1,
-      "market_cap_bn": 140.0,
-      "sector": "healthcare"
+      "vol_5d_pct": 100.0,
+      "vol_20d_pct": 8.0,
+      "vol_60d_pct": 18.0,
+      "return_20d_pct": 17.0,
+      "drawdown_pct": -35.0,
+      "volume_ratio": 1.5,
+      "market_vol_20d_pct": 21.0,
+      "india_vix": 36.5
     },
-    "prediction": 22.511690390112097
+    "prediction": 19.46857232754573
   },
   {
     "input": {
-      "beta": 1.1500000000000001,
-      "debt_to_equity": 0.0,
-      "market_cap_bn": 155.0,
-      "sector": "utilities"
+      "vol_5d_pct": 5.0,
+      "vol_20d_pct": 39.0,
+      "vol_60d_pct": 49.0,
+      "return_20d_pct": -18.5,
+      "drawdown_pct": -26.5,
+      "volume_ratio": 2.1,
+      "market_vol_20d_pct": 21.0,
+      "india_vix": 29.5
     },
-    "prediction": 9.93259297516023
+    "prediction": 43.03871603786341
   },
   {
     "input": {
-      "beta": 2.15,
-      "debt_to_equity": 2.1,
-      "market_cap_bn": 243.0,
-      "sector": "healthcare"
+      "vol_5d_pct": 41.0,
+      "vol_20d_pct": 12.0,
+      "vol_60d_pct": 51.0,
+      "return_20d_pct": -21.0,
+      "drawdown_pct": -17.0,
+      "volume_ratio": 0.5,
+      "market_vol_20d_pct": 34.0,
+      "india_vix": 52.0
     },
-    "prediction": 23.525859699012997
+    "prediction": 45.972926194506776
   }
 ]
