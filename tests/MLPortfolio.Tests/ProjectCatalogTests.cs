@@ -118,6 +118,30 @@ public class ProjectCatalogTests
     }
 
     [Fact]
+    public void Related_RanksSharedDomainAndTags_ExcludesSelfAndUnrelated()
+    {
+        var catalog = ProjectCatalog.Parse(Json(
+            Entry("me", category: "flagship", domain: "finance", tags: "\"x\", \"y\""),
+            Entry("same-domain", category: "flagship", domain: "finance", tags: "\"q\""),
+            Entry("one-tag", tags: "\"x\""),
+            Entry("two-tags", tags: "\"x\", \"y\""),
+            Entry("unrelated", tags: "\"z\"")));
+
+        var related = catalog.Related(catalog.Find("me")!);
+
+        Assert.Equal(["same-domain", "two-tags", "one-tag"], related.Select(p => p.Slug));
+    }
+
+    [Fact]
+    public void Related_RespectsMax()
+    {
+        var catalog = ProjectCatalog.Parse(Json(
+            Entry("a", tags: "\"x\""), Entry("b", tags: "\"x\""), Entry("c", tags: "\"x\"")));
+
+        Assert.Single(catalog.Related(catalog.Find("a")!, max: 1));
+    }
+
+    [Fact]
     public void Find_IsCaseInsensitiveAndReturnsNullWhenUnknown()
     {
         var catalog = ProjectCatalog.Parse(Json(Entry("nse-regime")));

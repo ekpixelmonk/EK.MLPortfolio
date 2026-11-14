@@ -25,6 +25,10 @@ Living technical record for ML Portfolio. Companion to [SPEC.md](../SPEC.md): th
 | [011](#adr-011-site-owner-settings-in-configuration) | Site owner settings in configuration | Accepted | 1 |
 | [012](#adr-012-theme-before-first-paint-client-side-filtering-no-jquery) | Theme before first paint; client-side filtering; no jQuery | Accepted | 1 |
 | [013](#adr-013-domain-classification-for-flagship-projects) | Domain classification for flagship projects | Accepted | 1 |
+| [014](#adr-014-schema-driven-form-with-validated-cached-schemas) | Schema-driven form with validated, cached schemas | Accepted | 2 |
+| [015](#adr-015-markdown-write-ups-with-raw-html-disabled) | Markdown write-ups with raw HTML disabled | Accepted | 2 |
+| [016](#adr-016-styled-error-pages-via-status-code-re-execution) | Styled error pages via status-code re-execution | Accepted | 2 |
+| [017](#adr-017-form-preview-for-projects-that-are-not-live) | Form preview for projects that are not live | Accepted | 2 |
 
 ---
 
@@ -124,6 +128,32 @@ Living technical record for ML Portfolio. Companion to [SPEC.md](../SPEC.md): th
 - **Decision:** `projects.json` gets a `domain` field. Allowed values are a closed set in `ProjectDomains` (`finance`, `cybersecurity`), required for flagship projects and optional for Model Zoo. The homepage shows a pill per domain *that a project actually uses*, ahead of the tag pills, and a domain label on the card. The old `NSE` tag was removed in favour of the Finance domain. `disclaimer` stays a separate field (ADR-009).
 - **Consequences:** + a new domain is one line in `ProjectDomains` plus a project using it; no empty pills, so Cybersecurity stays hidden until it has a project. − domains are code, not data, so adding one needs a rebuild.
 
+## ADR-014: Schema-driven form with validated, cached schemas
+
+- **Status:** Accepted · **Phase:** 2
+- **Context:** The input form must come from `schema.json` (ADR-003), and the same file will later validate `POST /predict`. A broken schema must not take a project page down.
+- **Decision:** `SchemaStore` loads `App_Data/models/<slug>/schema.json` once per slug and caches it. It validates on load: identifier-style input names, unique names, known types (`number`, `select`), `min <= max`, positive `step`, select options present, defaults and preset values valid for their input, outputs type known, classification needs two or more labels. An invalid schema logs a warning and the page renders without a form. Only slugs found in the catalog ever reach the file system, which rules out path traversal. The form is rendered server-side (`_TryModel`); `project.js` only adds presets, local validation and the fetch call.
+- **Consequences:** + the schema is checked once, in one place, and Phase 3 can reuse the same model for server-side validation. − the cache means schema edits need an app restart. The model only supports `number` and `select` inputs; new input types need schema, view and validation changes.
+
+## ADR-015: Markdown write-ups with raw HTML disabled
+
+- **Status:** Accepted · **Phase:** 2
+- **Decision:** Write-ups are `App_Data/content/<slug>.md`, rendered with Markdig (advanced extensions: tables, etc.) with raw HTML turned off, then output with `Html.Raw`. Rendered HTML is cached per slug.
+- **Consequences:** + a write-up can never inject markup or script, so `Html.Raw` is safe. − authors can't embed custom HTML; use images or Markdown, or revisit with a sanitiser if that becomes limiting.
+
+## ADR-016: Styled error pages via status-code re-execution
+
+- **Status:** Accepted · **Phase:** 2
+- **Decision:** `UseStatusCodePagesWithReExecute("/error/{0}")` sends bare status codes to `HomeController.StatusCodePage`, which renders a styled `NotFound` view for 404 and the generic error view otherwise. The real status code is preserved. `ProjectsController` simply returns `NotFound()` for unknown slugs.
+- **Consequences:** + one consistent 404 for unknown slugs and unknown URLs, correct status for crawlers. − API endpoints returning empty 404s (e.g. `/predict/{slug}` in Phase 3) will also be re-executed, so they should return a body or opt out.
+
+## ADR-017: Form preview for projects that are not live
+
+- **Status:** Accepted · **Phase:** 2
+- **Context:** The pilots have a draft schema but no model yet, and the owner wanted to see the form working in the UI before Phase 3.
+- **Decision:** When a project's status is not `live` but a valid schema exists, the form renders disabled with a notice that predictions are switched off. The Predict button and presets are disabled. A project whose `inferenceMode` is `none` never shows a form. The draft schema for logistic regression (exam pass/fail from study hours, attendance, previous score and tutoring) is marked as draft in `schema.json` and may change when the model is trained.
+- **Consequences:** + visitors and the owner can see what the demo will look like without a misleading live result. − the draft schema's features are provisional; Phase 3 may change them.
+
 ---
 
 ## Phase Log
@@ -161,7 +191,27 @@ Record what was actually built, deviations from the spec, gotchas and follow-ups
   - Card links 404 until Phase 2.
   - Add a CSP when security headers arrive in Phase 6 (inline theme script).
   - Not yet checked: Lighthouse scores and the narrow-screen layout.
-### Phase 2: Generic project page, content, gallery, dynamic form (not started)
+### Phase 2: Generic project page, content, gallery, dynamic form (complete)
+
+- **Built:**
+  - `/projects/{slug}`: header (status, domain, tags, GitHub button), Markdown summary, chart gallery with captions, "Try the model" form, links and related projects, finance disclaimer.
+  - `ProjectsController`, `ProjectPageViewModel`, `Details` and `_TryModel` views.
+  - `FormSchema` model, `SchemaStore` (validated, cached), `ProjectContentStore` (Markdig), `IProjectCatalog.Related`.
+  - `wwwroot/js/project.js`: presets, local validation and the `/predict/{slug}` call, expecting the response shapes in SPEC §4.3.
+  - Styled 404 and error pages; project-page CSS tokens.
+  - Write-ups for the three catalog projects, and a draft `schema.json` for logistic regression.
+- **Verification:** `dotnet test` passes 76 tests: schema validation (including every rejection case), Markdown rendering (raw HTML stripped), related-project ranking, and page tests for known and unknown slugs, case-insensitive slugs, a path-traversal slug, disabled form preview, a live project with a chart gallery and links, a project without content or charts, and the finance disclaimer. The running app returns 200 for the three project pages and 404 for unknown URLs.
+- **Not verified:**
+  - The page was not looked at in a browser this session (the Chrome extension was not connected).
+  - Preset and submit behaviour in `project.js` is untested until Phase 3 provides an endpoint.
+  - Mobile layout.
+- **Deviations from the spec:** Plotly JSON charts are deferred (images only for now). Form shows as a disabled preview for non-live projects (ADR-017).
+- **Gotchas:** Razor boolean attributes (`disabled`, `required`, `selected`) are omitted when false, which the form relies on. The chart gallery and live-form paths are tested by swapping `IProjectCatalog` in `WebApplicationFactory`, since no real project has charts yet.
+- **Follow-ups:**
+  - Phase 3 must add `POST /predict/{slug}` returning the SPEC §4.3 shapes, and mark the pilots `live`.
+  - Return a body from `/predict` errors (ADR-016).
+  - Confirm the draft logistic regression features before training.
+  - Decide whether linear regression gets a draft schema too.
 ### Phase 3: Pilot projects, `PredictController`, parity tests (not started)
 ### Phase 3b: Flagship placeholders (not started)
 ### Phase 4: Flagship NSE regime classifier (not started)

@@ -1,0 +1,17 @@
+{
+  // DRAFT: input form for the logistic regression pilot. Features and ranges may change when the
+  // model is trained in Phase 3. There is no model.onnx yet, so the page shows this form disabled.
+  "modelFile": "model.onnx",
+  "modelVersion": "0.0.0-draft",
+  "inputs": [
+    { "name": "hours_studied", "label": "Hours studied per week", "type": "number", "min": 0, "max": 40, "step": 0.5, "default": 10, "help": "Self-study time outside class" },
+    { "name": "attendance_pct", "label": "Attendance (%)", "type": "number", "min": 0, "max": 100, "default": 85 },
+    { "name": "previous_score", "label": "Previous exam score", "type": "number", "min": 0, "max": 100, "default": 60 },
+    { "name": "tutoring", "label": "Tutoring", "type": "select", "options": ["none", "weekly", "daily"], "default": "none" }
+  ],
+  "outputs": { "type": "classification", "labels": ["Fail", "Pass"] },
+  "presets": [
+    { "name": "Well prepared", "values": { "hours_studied": 22, "attendance_pct": 96, "previous_score": 82, "tutoring": "weekly" } },
+    { "name": "At risk", "values": { "hours_studied": 3, "attendance_pct": 55, "previous_score": 38, "tutoring": "none" } }
+  ]
+}

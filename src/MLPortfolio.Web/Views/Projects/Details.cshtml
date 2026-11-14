@@ -1,0 +1,110 @@
+@model ProjectPageViewModel
+@{
+    var p = Model.Project;
+    ViewData["Title"] = p.Title;
+    ViewData["Description"] = p.Summary;
+    var hasCharts = p.Charts.Count > 0;
+    var hasLinks = !string.IsNullOrWhiteSpace(p.RepoUrl) || !string.IsNullOrWhiteSpace(p.NotebookUrl) || Model.Related.Count > 0;
+}
+
+<article class="container project-page">
+    <a class="back-link" asp-controller="Home" asp-action="Index" asp-fragment="projects">&larr; All projects</a>
+
+    <header class="project-header">
+        <div class="badges">
+            <span class="status status-@p.Status">@p.StatusLabel</span>
+            <span class="domain-label">@(p.DomainLabel ?? (p.Category == ProjectCategories.Zoo ? "Model Zoo" : "Flagship ML"))</span>
+        </div>
+        <h1 class="project-page-title">@p.Title</h1>
+        <p class="hero-sub">@p.Summary</p>
+        <ul class="tag-list" aria-label="Tags">
+            @foreach (var t in p.Tags)
+            {
+                <li>@t</li>
+            }
+        </ul>
+        @if (!string.IsNullOrWhiteSpace(p.RepoUrl))
+        {
+            <a class="btn-accent" href="@p.RepoUrl" rel="noopener" target="_blank">View on GitHub</a>
+        }
+    </header>
+
+    <section class="page-section" aria-labelledby="summary-heading">
+        <h2 id="summary-heading" class="section-title">Summary</h2>
+        @if (Model.ContentHtml is not null)
+        {
+            <div class="prose">@Html.Raw(Model.ContentHtml)</div>
+        }
+        else
+        {
+            <p class="text-secondary">A write-up for this project hasn't been published yet.</p>
+        }
+    </section>
+
+    @if (hasCharts)
+    {
+        <section class="page-section" aria-labelledby="viz-heading">
+            <h2 id="viz-heading" class="section-title">Visualizations</h2>
+            <div class="gallery">
+                @foreach (var chart in p.Charts)
+                {
+                    <figure class="gallery-item">
+                        <a href="@Url.Content($"~/projects/{p.Slug}/charts/{chart.File}")" target="_blank" rel="noopener">
+                            <img src="@Url.Content($"~/projects/{p.Slug}/charts/{chart.File}")" alt="@chart.Caption" loading="lazy" />
+                        </a>
+                        <figcaption>@chart.Caption</figcaption>
+                    </figure>
+                }
+            </div>
+        </section>
+    }
+
+    @if (Model.Schema is not null)
+    {
+        <section class="page-section" aria-labelledby="try-heading">
+            <h2 id="try-heading" class="section-title">Try the model</h2>
+            @await Html.PartialAsync("_TryModel", (Project: p, Schema: Model.Schema, Enabled: Model.FormEnabled))
+        </section>
+    }
+
+    @if (hasLinks)
+    {
+        <section class="page-section" aria-labelledby="links-heading">
+            <h2 id="links-heading" class="section-title">Links</h2>
+            <ul class="link-list">
+                @if (!string.IsNullOrWhiteSpace(p.RepoUrl))
+                {
+                    <li><a href="@p.RepoUrl" rel="noopener" target="_blank">GitHub repository</a></li>
+                }
+                @if (!string.IsNullOrWhiteSpace(p.NotebookUrl))
+                {
+                    <li><a href="@p.NotebookUrl" rel="noopener" target="_blank">Notebook</a></li>
+                }
+            </ul>
+            @if (Model.Related.Count > 0)
+            {
+                <h3 class="subsection-title">Related projects</h3>
+                <ul class="link-list">
+                    @foreach (var r in Model.Related)
+                    {
+                        <li><a href="@Url.Content("~/projects/" + r.Slug)">@r.Title</a> <span class="text-secondary">&middot; @r.Summary</span></li>
+                    }
+                </ul>
+            }
+        </section>
+    }
+
+    @if (p.Disclaimer == "finance")
+    {
+        <aside class="disclaimer" role="note">
+            <strong>Disclaimer.</strong> Educational purposes only. Not investment advice.
+        </aside>
+    }
+</article>
+
+@section Scripts {
+    @if (Model.Schema is not null)
+    {
+        <script src="~/js/project.js" asp-append-version="true"></script>
+    }
+}

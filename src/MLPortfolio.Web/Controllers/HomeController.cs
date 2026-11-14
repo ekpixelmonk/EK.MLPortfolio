@@ -19,6 +19,14 @@ public class HomeController(IProjectCatalog catalog, IOptions<SiteOptions> site)
         return View(model);
     }
 
+    /// <summary>Styled page for bare status codes (e.g. unknown URL or unknown project slug). The original status code is preserved.</summary>
+    [Route("/error/{code:int}")]
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult StatusCodePage(int code) =>
+        code == StatusCodes.Status404NotFound
+            ? View("NotFound")
+            : View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

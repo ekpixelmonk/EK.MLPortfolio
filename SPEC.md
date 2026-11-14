@@ -85,12 +85,19 @@ Sections in order:
 5. **Links:** GitHub repo, notebook (nbviewer/GitHub), related projects.
 6. **Disclaimer** (projects with `"disclaimer": "finance"` in `projects.json`, independent of category): "Educational purposes only. Not investment advice."
 
-Unknown slug returns a styled 404.
+Unknown slug (and any unknown URL) returns a styled 404 with the real 404 status code.
+
+Implementation notes (Phase 2):
+- The Markdown write-up is rendered with Markdig with raw HTML disabled; a missing write-up shows a short placeholder line.
+- The gallery currently supports image files (PNG/SVG); Plotly JSON charts are deferred. The section is hidden when a project lists no charts.
+- The form is shown only when `inferenceMode` is not `none` and a valid `schema.json` exists. An invalid or missing schema never breaks the page; it just hides the form (and logs a warning). While a project's status is not `live`, the form renders as a disabled preview with a notice.
+- "Related projects" are other projects in the same domain or sharing tags, best matches first (max 3).
+- Fields: `number` inputs (min, max, optional `step`) and `select` inputs; schema values and presets are validated when the schema loads.
 
 ### 4.3 Prediction endpoint (`POST /predict/{slug}`)
 - Request: JSON object of field name → value.
 - Validation against `schema.json` (type, min, max, allowed options, required). Invalid input returns 400 with per-field errors.
-- Response: `{ prediction, label?, probabilities?, explanation?, modelVersion }`.
+- Response: `{ prediction, label?, probabilities?, explanation?, modelVersion }`, where `probabilities` is an object mapping each label to a value between 0 and 1. A 400 body is `{ "errors": { "<field>": "message" } }`. The page script (`wwwroot/js/project.js`) already expects these shapes.
 - Projects with `inferenceMode: "lookup"` resolve against `lookup.json` (precomputed outputs) instead of ONNX.
 - Projects with `inferenceMode: "none"` hide the form.
 
@@ -204,7 +211,7 @@ Each project's data is synthetic or openly licensed; the data source is stated o
 |---|---|---|
 | 0 | Solution scaffold, repo, `.gitignore`, theme decision | 0.5 day |
 | 1 | Catalog service, homepage, shared layout, themes | 1 day ✅ done |
-| 2 | Generic project page, Markdown content, chart gallery, dynamic form from schema | 1–2 days |
+| 2 | Generic project page, Markdown content, chart gallery, dynamic form from schema | 1–2 days ✅ done |
 | 3 | Two pilot Model Zoo projects end to end (logistic regression, linear regression), `PredictController`, parity tests | 2–3 days |
 | 3b | Flagship placeholders: "Coming soon" cards and pages (`status: "coming-soon"`, `inferenceMode: "none"`) for the NSE regime classifier and other flagships | 0.5 day |
 | 4 | Flagship: NSE regime classifier (replaces its placeholder) | 3–5 days |

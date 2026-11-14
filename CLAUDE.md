@@ -12,6 +12,7 @@ SDK is pinned in `global.json` (10.0.x). Do not add `Microsoft.AspNetCore.Mvc.Te
 
 ## Layout
 - `src/MLPortfolio.Web`: the site. `Services/ProjectCatalog` loads and validates `App_Data/projects.json` at startup; `Controllers/HomeController` renders the homepage; views in `Views/`; theme tokens in `wwwroot/css/site.css`; `wwwroot/js/site.js` (theme toggle) and `home.js` (filter/search).
+- Project page (`/projects/{slug}`): `Controllers/ProjectsController` + `Views/Projects/Details.cshtml`; form partial `Views/Shared/_TryModel.cshtml`; `wwwroot/js/project.js` handles presets and the `/predict/{slug}` call (the endpoint itself is Phase 3). Services: `ProjectContentStore` (Markdown → HTML, raw HTML disabled), `SchemaStore` (loads/validates `schema.json`, cached; invalid → no form + warning log). Unknown URLs go through `UseStatusCodePagesWithReExecute` to a styled 404.
 - `src/MLPortfolio.Web/App_Data`: `projects.json`, `content/<slug>.md`, `models/<slug>/{model.onnx, schema.json}`.
 - `ml/<slug>/`: self-contained uv projects (notebook, `train.py`, export). Never import across folders or into the web app.
 - `tests/MLPortfolio.Tests`: xUnit unit tests plus `WebApplicationFactory<Program>` integration tests.
@@ -22,7 +23,8 @@ SDK is pinned in `global.json` (10.0.x). Do not add `Microsoft.AspNetCore.Mvc.Te
 - Keep a project's catalog `status` as `coming-soon` until it is really built.
 - Site owner info and social links live in `appsettings.json` (`Site`); never invent URLs.
 - Colours and spacing go through the CSS tokens in `site.css`; keep light and dark in sync and WCAG AA.
-- Razor HTML-encodes characters like `·`; assert around them in tests.
+- Razor HTML-encodes characters like `·` and `'` in some contexts; assert around them in tests. To test a different catalog, replace `IProjectCatalog` via `WebApplicationFactory.WithWebHostBuilder` (see `ProjectPageTests`).
+- Only slugs found in the catalog may be used to build file paths (stores assume this).
 
 ## Workflow
 - Don't write implementation plans; build directly once scope is agreed.

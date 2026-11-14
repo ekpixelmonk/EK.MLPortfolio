@@ -18,6 +18,9 @@ public interface IProjectCatalog
 
     /// <summary>Case-insensitive slug lookup; null when unknown.</summary>
     ProjectMeta? Find(string slug);
+
+    /// <summary>Other projects in the same domain or sharing a tag, best matches first (at most <paramref name="max"/>).</summary>
+    IReadOnlyList<ProjectMeta> Related(ProjectMeta project, int max = 3);
 }
 
 public sealed class ProjectCatalogException(string message) : Exception(message);
@@ -51,6 +54,17 @@ public sealed class ProjectCatalog : IProjectCatalog
         All.Where(p => p.Category == category).ToList();
 
     public ProjectMeta? Find(string slug) => _bySlug.GetValueOrDefault(slug);
+
+    public IReadOnlyList<ProjectMeta> Related(ProjectMeta project, int max = 3) =>
+        All.Where(p => p.Slug != project.Slug)
+           .Select(p => (Project: p, Score:
+               (p.Domain is not null && p.Domain == project.Domain ? 2 : 0) +
+               p.Tags.Intersect(project.Tags, StringComparer.OrdinalIgnoreCase).Count()))
+           .Where(x => x.Score > 0)
+           .OrderByDescending(x => x.Score)
+           .Select(x => x.Project)
+           .Take(max)
+           .ToList();
 
     public static ProjectCatalog LoadFile(string path)
     {

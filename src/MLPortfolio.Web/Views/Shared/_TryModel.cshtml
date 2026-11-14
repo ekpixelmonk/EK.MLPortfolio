@@ -1,0 +1,68 @@
+@using System.Globalization
+@using System.Text.Json
+@model (ProjectMeta Project, FormSchema Schema, bool Enabled)
+@{
+    var schema = Model.Schema;
+    var ci = CultureInfo.InvariantCulture;
+}
+
+@if (!Model.Enabled)
+{
+    <p class="notice" role="note">This is a preview of the form. The model for this project isn't live yet, so predictions are switched off.</p>
+}
+
+@if (schema.Presets.Count > 0)
+{
+    <div class="presets" role="group" aria-label="Example inputs">
+        <span class="presets-label">Try an example:</span>
+        @foreach (var preset in schema.Presets)
+        {
+            <button type="button" class="chip" data-preset="@JsonSerializer.Serialize(preset.Values)" disabled="@(!Model.Enabled)">@preset.Name</button>
+        }
+    </div>
+}
+
+<form id="try-form" class="try-form" data-slug="@Model.Project.Slug" novalidate>
+    <fieldset class="try-fields" disabled="@(!Model.Enabled)">
+        <legend class="visually-hidden">Model inputs</legend>
+        @foreach (var input in schema.Inputs)
+        {
+            var id = "f-" + input.Name;
+            var helpId = id + "-help";
+            var errId = id + "-error";
+            <div class="field">
+                <label for="@id">@input.Label</label>
+                @if (input.IsSelect)
+                {
+                    <select id="@id" name="@input.Name" data-type="select" aria-describedby="@(input.Help is null ? errId : helpId + " " + errId)" required="@input.Required">
+                        @foreach (var option in input.Options)
+                        {
+                            <option value="@option" selected="@(option == input.DefaultText)">@option</option>
+                        }
+                    </select>
+                }
+                else
+                {
+                    <input id="@id" name="@input.Name" data-type="number" type="number" inputmode="decimal"
+                           step="@(input.Step?.ToString(ci) ?? "any")"
+                           min="@input.Min?.ToString(ci)" max="@input.Max?.ToString(ci)"
+                           value="@input.DefaultText" required="@input.Required"
+                           aria-describedby="@(input.Help is null ? errId : helpId + " " + errId)" />
+                }
+                @if (input.Help is not null)
+                {
+                    <small id="@helpId" class="field-help">@input.Help</small>
+                }
+                <small id="@errId" class="field-error" data-error-for="@input.Name" role="alert"></small>
+            </div>
+        }
+    </fieldset>
+    <button type="submit" class="btn-accent" disabled="@(!Model.Enabled)">Predict</button>
+</form>
+
+<div id="try-result" class="result" aria-live="polite" hidden>
+    <p class="result-label" id="result-label"></p>
+    <ul class="result-probs" id="result-probs"></ul>
+    <p class="result-explanation" id="result-explanation"></p>
+    <p class="result-meta" id="result-meta"></p>
+</div>
