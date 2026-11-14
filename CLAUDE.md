@@ -23,6 +23,7 @@ SDK is pinned in `global.json` (10.0.x). Do not add `Microsoft.AspNetCore.Mvc.Te
 
 ## Conventions
 - Projects are metadata-driven: adding one is data (folder + `projects.json` entry), not new controller/view code.
+- Homepage tag pills come from `IProjectCatalog.SharedTags` (tags on 2+ projects); one-off tags are searchable only.
 - Flagship projects need a `domain` (closed set in `Models/ProjectMeta.cs` → `ProjectDomains`); domain pills on the homepage appear only for domains in use.
 - Keep a project's catalog `status` as `coming-soon` until it is really built.
 - Site owner info and social links live in `appsettings.json` (`Site`); never invent URLs. Project code/notebook links are derived from `Site:RepoUrl` by `SiteOptions.CodeUrlFor/NotebookUrlFor` (live projects only; a project's `repoUrl` overrides).

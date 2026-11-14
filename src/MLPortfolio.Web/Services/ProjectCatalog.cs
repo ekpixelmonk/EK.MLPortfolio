@@ -13,6 +13,9 @@ public interface IProjectCatalog
     /// <summary>Distinct tags across all projects, sorted case-insensitively.</summary>
     IReadOnlyList<string> Tags { get; }
 
+    /// <summary>Tags used by at least two projects: the ones worth a filter pill. One-off tags stay searchable.</summary>
+    IReadOnlyList<string> SharedTags { get; }
+
     /// <summary>Domains that at least one project uses, sorted by display label. Unused domains are not listed.</summary>
     IReadOnlyList<string> Domains { get; }
 
@@ -42,12 +45,16 @@ public sealed class ProjectCatalog : IProjectCatalog
         _bySlug = All.ToDictionary(p => p.Slug, StringComparer.OrdinalIgnoreCase);
         Tags = All.SelectMany(p => p.Tags).Distinct(StringComparer.OrdinalIgnoreCase)
                   .OrderBy(t => t, StringComparer.OrdinalIgnoreCase).ToList();
+        SharedTags = All.SelectMany(p => p.Tags.Distinct(StringComparer.OrdinalIgnoreCase))
+                        .GroupBy(t => t, StringComparer.OrdinalIgnoreCase).Where(g => g.Count() >= 2)
+                        .Select(g => g.Key).OrderBy(t => t, StringComparer.OrdinalIgnoreCase).ToList();
         Domains = All.Select(p => p.Domain).OfType<string>().Distinct()
                      .OrderBy(d => ProjectDomains.LabelFor(d), StringComparer.OrdinalIgnoreCase).ToList();
     }
 
     public IReadOnlyList<ProjectMeta> All { get; }
     public IReadOnlyList<string> Tags { get; }
+    public IReadOnlyList<string> SharedTags { get; }
     public IReadOnlyList<string> Domains { get; }
 
     public IReadOnlyList<ProjectMeta> InCategory(string category) =>

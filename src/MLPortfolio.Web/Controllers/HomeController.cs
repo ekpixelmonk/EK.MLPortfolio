@@ -15,7 +15,7 @@ public class HomeController(IProjectCatalog catalog, IOptions<SiteOptions> site)
             catalog.InCategory(ProjectCategories.Flagship),
             catalog.InCategory(ProjectCategories.Zoo),
             catalog.Domains,
-            catalog.Tags);
+            catalog.SharedTags);
         return View(model);
     }
 

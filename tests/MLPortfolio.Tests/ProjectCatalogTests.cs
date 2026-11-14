@@ -65,6 +65,18 @@ public class ProjectCatalogTests
     }
 
     [Fact]
+    public void SharedTags_ListsOnlyTagsUsedByTwoOrMoreProjects()
+    {
+        var catalog = ProjectCatalog.Parse(Json(
+            Entry("a", tags: "\"Trees\", \"fraud\", \"fraud\""),   // a repeated tag within one project counts once
+            Entry("b", tags: "\"trees\", \"churn\""),
+            Entry("c", tags: "\"classification\"")));
+
+        Assert.Equal(["Trees"], catalog.SharedTags);
+        Assert.Contains("fraud", catalog.Tags);   // still known, and still searchable
+    }
+
+    [Fact]
     public void Domains_ListsOnlyDomainsInUse_SortedByLabel()
     {
         var catalog = ProjectCatalog.Parse(Json(

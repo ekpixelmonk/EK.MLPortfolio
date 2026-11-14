@@ -73,7 +73,7 @@ All code lives in this single repo initially. To keep any project extractable in
 - Card click navigates to `/projects/{slug}` (404 until Phase 2 builds the project page).
 - Owner name, tagline, description and GitHub/LinkedIn URLs come from the `Site` section of `appsettings.json`; a social link is rendered only when its URL is set. Twitter is not included yet.
 - Flagship projects have a **domain** (`finance`, `cybersecurity`; add more in `ProjectDomains`). It is shown as a label on the card.
-- Filters: one pill active at a time (**All**, then a pill per domain *in use*, then tag pills) plus a text search over title, summary, domain and tags. Only domains used by a project get a pill, so Cybersecurity appears once a cybersecurity project exists. Search;  a section hides when it has no visible cards, and an empty state shows when nothing matches.
+- Filters: one pill active at a time (**All**, then a pill per domain *in use*, then a pill per tag shared by at least two projects) plus a text search over title, summary, domain and tags. One-off tags get no pill (they stay on cards and searchable), to keep the row short as the catalog grows. Only domains used by a project get a pill, so Cybersecurity appears once a cybersecurity project exists. Search;  a section hides when it has no visible cards, and an empty state shows when nothing matches.
 - Catalog entries stay `coming-soon` until their project is actually built, so a "Live" badge never points at a missing page.
 
 ### 4.2 Project page (`/projects/{slug}`)

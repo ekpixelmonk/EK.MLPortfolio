@@ -5,4 +5,5 @@ public sealed record HomeViewModel(
     IReadOnlyList<ProjectMeta> Flagship,
     IReadOnlyList<ProjectMeta> Zoo,
     IReadOnlyList<string> Domains,
+    /// <summary>Tags shown as filter pills (see <see cref="Services.IProjectCatalog.SharedTags"/>).</summary>
     IReadOnlyList<string> Tags);

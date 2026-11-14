@@ -37,6 +37,17 @@ public class HomePageTests(WebApplicationFactory<Program> factory) : IClassFixtu
         Assert.DoesNotContain("Finance &amp; Fintech", html);
     }
 
+    [Fact]
+    public async Task Home_FilterPills_ExcludeOneOffTags()
+    {
+        var html = await GetHomeAsync();
+
+        Assert.Contains("data-kind=\"tag\" data-value=\"classification\"", html);   // shared by many projects
+        Assert.Contains("data-kind=\"tag\" data-value=\"trees\"", html);            // decision tree + random forest
+        Assert.DoesNotContain("data-kind=\"tag\" data-value=\"fraud\"", html);      // only the SVM
+        Assert.DoesNotContain("data-kind=\"tag\" data-value=\"volatility\"", html);
+    }
+
     [Theory]
     [InlineData("NSE Market Regime Classifier", "/projects/nse-regime")]
     [InlineData("Logistic Regression", "/projects/logistic-regression")]

@@ -214,6 +214,13 @@ Living technical record for ML Portfolio. Companion to [SPEC.md](../SPEC.md): th
 - **Decision:** `Site:RepoUrl` (monorepo) and `Site:RepoBranch` (default `main`) derive the links: `<repo>/tree/<branch>/ml/<slug>` and `<repo>/blob/<branch>/ml/<slug>/notebook.ipynb`. Only `live` projects get derived links (a placeholder has no code yet). A project's own `repoUrl`/`notebookUrl` wins and suppresses the derived notebook link, which is how a flagship split into its own repo overrides it. A trailing `.git` or slash is stripped. The link appears under the form, in the header and in the Links list.
 - **Consequences:** no per-project URLs to maintain. The links only resolve once the code is pushed; the configured remote's `main` currently holds only the initial commit.
 
+## ADR-024: Tag pills only for shared tags
+
+- **Status:** accepted.
+- **Context:** With seven Zoo projects the homepage had about 19 tag pills, most of them one-offs (fraud, equities, volatility) that filter to a single card. It read as clutter.
+- **Decision:** A tag gets a filter pill only when at least two projects use it (`IProjectCatalog.SharedTags`, case-insensitive, a repeat within one project counts once). `Tags` still lists everything; card tags and the text search are unchanged, so one-off tags remain findable.
+- **Consequences:** The row is now All, Finance and five tags. Pills appear on their own as a second project adopts a tag. Alternatives not taken: collapsing pills behind a "More" toggle, or dropping tag pills entirely.
+
 ## Phase Log
 
 Record what was actually built, deviations from the spec, gotchas and follow-ups. Add one entry per phase when it completes.
