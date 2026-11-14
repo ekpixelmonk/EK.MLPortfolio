@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/MLPortfolio.Web/MLPortfolio.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/MLPortfolio.Tests/MLPortfolio.Tests.csproj" />
+  </Folder>
+</Solution>
