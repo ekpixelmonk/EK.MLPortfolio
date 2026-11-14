@@ -30,8 +30,8 @@
     </div>
     <p id="filter-status" class="visually-hidden" role="status" aria-live="polite"></p>
 
-    @await Html.PartialAsync("_ProjectSection", (Title: "Flagship ML", Id: "flagship", Projects: Model.Flagship))
-    @await Html.PartialAsync("_ProjectSection", (Title: "Model Zoo", Id: "zoo", Projects: Model.Zoo))
+    @await Html.PartialAsync("_ProjectSection", (Title: "Flagship ML", Id: "flagship", Description: "In-depth projects on real-world data, from the data audit to a deployed model.", Projects: Model.Flagship))
+    @await Html.PartialAsync("_ProjectSection", (Title: "Model Zoo", Id: "zoo", Description: "Short, focused demos of classic ML algorithms that you can try live.", Projects: Model.Zoo))
 
     <p id="no-results" class="empty-state" hidden>No projects match your filter.</p>
 </section>

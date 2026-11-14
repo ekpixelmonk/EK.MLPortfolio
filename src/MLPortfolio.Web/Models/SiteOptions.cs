@@ -5,13 +5,17 @@ public sealed class SiteOptions
 {
     public const string SectionName = "Site";
 
-    public string OwnerName { get; set; } = "Kartik";
+    public string OwnerName { get; set; } = "E. Kartik";
     public string Tagline { get; set; } = "Machine learning, engineered end to end.";
     public string Description { get; set; } = "Flagship ML projects and a Model Zoo, each with a live demo.";
 
     /// <summary>Optional. A link is rendered only when its URL is set.</summary>
     public string? GitHubUrl { get; set; }
     public string? LinkedInUrl { get; set; }
+    public string? TwitterUrl { get; set; }
+    public string? MediumUrl { get; set; }
+    /// <summary>Optional email address; rendered as a <c>mailto:</c> icon link. Never invented.</summary>
+    public string? Email { get; set; }
 
     /// <summary>
     /// Optional. The monorepo's GitHub URL. Live projects link to <c>ml/&lt;slug&gt;</c> inside it unless

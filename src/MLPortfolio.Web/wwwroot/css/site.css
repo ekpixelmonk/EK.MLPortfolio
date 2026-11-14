@@ -272,3 +272,12 @@ body { background: var(--bg); color: var(--text); }
 .reading-inputs li { display: flex; justify-content: space-between; max-width: 28rem; gap: 1rem; }
 .reading-inputs strong { color: var(--text); font-variant-numeric: tabular-nums; }
 @media (max-width: 575.98px) { .reading-sentence { font-size: 1.25rem; } .reading-probs li { grid-template-columns: 7rem 1fr 2.5rem; } }
+
+.section-desc { color: var(--muted); margin: -.75rem 0 1.25rem; max-width: 65ch; }
+
+/* Social icon links (navbar and footer) */
+.social-links { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; gap: .15rem; }
+.social-link { display: inline-flex; align-items: center; justify-content: center; width: 2.25rem; height: 2.25rem; border-radius: 50%; color: var(--muted); transition: color .15s, background-color .15s; }
+.social-link:hover { color: var(--accent); background: var(--accent-soft); }
+.social-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 575.98px) { .social-link { width: 2rem; height: 2rem; } .site-header nav { gap: .5rem !important; } }

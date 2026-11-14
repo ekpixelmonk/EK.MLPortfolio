@@ -22,7 +22,7 @@ public class HomePageTests(WebApplicationFactory<Program> factory) : IClassFixtu
         var html = await GetHomeAsync();
 
         // The separator is HTML-encoded by Razor, so match around it.
-        Assert.Matches(@"<title>Kartik .+ ML Portfolio</title>", html);
+        Assert.Matches(@"<title>E. Kartik .+ ML Portfolio</title>", html);
         Assert.Contains("<meta name=\"description\"", html);
         Assert.Contains("property=\"og:title\"", html);
     }
@@ -86,6 +86,15 @@ public class HomePageTests(WebApplicationFactory<Program> factory) : IClassFixtu
     }
 
     [Fact]
+    public async Task Home_EachSectionHasAShortDescription()
+    {
+        var html = await GetHomeAsync();
+
+        Assert.Contains("class=\"section-desc\">In-depth projects on real-world data", html);
+        Assert.Contains("class=\"section-desc\">Short, focused demos of classic ML algorithms", html);
+    }
+
+    [Fact]
     public async Task Home_TagsFlagshipCardWithItsDomain()
     {
         var html = await GetHomeAsync();
@@ -110,6 +119,44 @@ public class HomePageTests(WebApplicationFactory<Program> factory) : IClassFixtu
 
         Assert.DoesNotContain(">GitHub<", html);
         Assert.DoesNotContain(">LinkedIn<", html);
+    }
+
+    [Fact]
+    public async Task Home_NoSocialIconsWhenNothingIsConfigured()
+    {
+        using var custom = factory.WithWebHostBuilder(b =>
+        {
+            foreach (var key in new[] { "GitHubUrl", "LinkedInUrl", "TwitterUrl", "MediumUrl", "Email" })
+                b.UseSetting($"Site:{key}", "");
+        });
+
+        var html = await (await custom.CreateClient().GetAsync("/")).Content.ReadAsStringAsync();
+
+        Assert.DoesNotContain("class=\"social-links\"", html);
+    }
+
+    [Fact]
+    public async Task Home_ShowsSocialIconsInHeaderAndFooter_OnlyForConfiguredLinks()
+    {
+        using var custom = factory.WithWebHostBuilder(b =>
+        {
+            b.UseSetting("Site:LinkedInUrl", "https://www.linkedin.com/in/example");
+            b.UseSetting("Site:TwitterUrl", "https://x.com/example");
+            b.UseSetting("Site:Email", "someone@example.com");
+            b.UseSetting("Site:MediumUrl", "");
+            b.UseSetting("Site:GitHubUrl", "");
+        });
+
+        var html = await (await custom.CreateClient().GetAsync("/")).Content.ReadAsStringAsync();
+
+        Assert.Equal(2, System.Text.RegularExpressions.Regex.Matches(html, "class=\"social-links\"").Count);   // navbar and footer
+        Assert.Contains("href=\"https://www.linkedin.com/in/example\"", html);
+        Assert.Contains("aria-label=\"X (Twitter)\"", html);
+        Assert.Contains("href=\"mailto:someone@example.com\"", html);
+        Assert.DoesNotContain("aria-label=\"Medium\"", html);      // no URL configured
+        Assert.DoesNotContain("aria-label=\"GitHub\"", html);
+        var header = html[html.IndexOf("<header", StringComparison.Ordinal)..html.IndexOf("</header>", StringComparison.Ordinal)];
+        Assert.Contains("social-links", header);
     }
 
     [Theory]

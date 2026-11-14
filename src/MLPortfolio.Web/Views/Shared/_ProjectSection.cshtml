@@ -1,9 +1,10 @@
-@model (string Title, string Id, IReadOnlyList<ProjectMeta> Projects)
+@model (string Title, string Id, string Description, IReadOnlyList<ProjectMeta> Projects)
 
 @if (Model.Projects.Count > 0)
 {
     <section class="project-section" data-section="@Model.Id" aria-labelledby="section-@Model.Id">
         <h3 id="section-@Model.Id" class="section-title">@Model.Title</h3>
+        <p class="section-desc">@Model.Description</p>
         <div class="project-grid">
             @foreach (var p in Model.Projects)
             {

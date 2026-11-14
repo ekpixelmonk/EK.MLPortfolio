@@ -303,6 +303,30 @@ def _style() -> None:
     })
 
 
+def make_thumbnail(path: Path) -> None:
+    """The homepage card image: 16:9 (the card's shape, so nothing is cropped), no axes or small print.
+    The Nifty 200 over its whole history on a log scale, with each regime as a coloured band."""
+    full = labels.build_labels(data.load_raw())
+    fig, ax = plt.subplots(figsize=(8, 4.5))
+    fig.subplots_adjust(left=0, right=1, top=1, bottom=0)
+    ax.axis("off")
+    ax.margins(x=0)
+    ax.plot(full.index, full["close"], color="#1c1917", lw=2.2, zorder=3)
+    ax.set_yscale("log")
+    lo, hi = full["close"].min(), full["close"].max()
+    ax.set_ylim(lo / 1.35, hi * 1.25)
+    for name in LABELS:
+        ax.fill_between(full.index, 0, 1, where=(full["regime"] == name).to_numpy(), transform=ax.get_xaxis_transform(),
+                        color=labels.COLORS[name], alpha=0.42, lw=0, step="mid", zorder=1)
+    handles = [plt.Rectangle((0, 0), 1, 1, color=labels.COLORS[n], alpha=0.8) for n in LABELS]
+    leg = ax.legend(handles, LABELS, loc="upper left", ncol=2, frameon=True, fontsize=13, borderpad=0.7,
+                    labelspacing=0.5, handlelength=1.2, columnspacing=1.2, facecolor="white", edgecolor="none",
+                    framealpha=0.85, bbox_to_anchor=(0.03, 0.97))
+    leg.set_zorder(5)
+    fig.savefig(path, dpi=150, facecolor="white")
+    plt.close(fig)
+
+
 def make_charts(result: Result, out_dir: Path) -> list[dict]:
     _style()
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -414,7 +438,7 @@ def make_charts(result: Result, out_dir: Path) -> list[dict]:
     save(fig, "stress-probability.png",
          "The model's probability of Stress each day (line) against the days that really were Stress (shaded).")
 
-    shutil.copyfile(out_dir / "regime-timeline.png", out_dir / "thumbnail.png")
+    make_thumbnail(out_dir / "thumbnail.png")
     return charts
 
 
