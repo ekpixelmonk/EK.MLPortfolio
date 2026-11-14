@@ -4,7 +4,7 @@
     ViewData["Title"] = p.Title;
     ViewData["Description"] = p.Summary;
     var hasCharts = p.Charts.Count > 0;
-    var hasLinks = !string.IsNullOrWhiteSpace(p.RepoUrl) || !string.IsNullOrWhiteSpace(p.NotebookUrl) || Model.Related.Count > 0;
+    var hasLinks = !string.IsNullOrWhiteSpace(Model.CodeUrl) || !string.IsNullOrWhiteSpace(Model.NotebookUrl) || Model.Related.Count > 0;
 }
 
 <article class="container project-page">
@@ -23,9 +23,9 @@
                 <li>@t</li>
             }
         </ul>
-        @if (!string.IsNullOrWhiteSpace(p.RepoUrl))
+        @if (!string.IsNullOrWhiteSpace(Model.CodeUrl))
         {
-            <a class="btn-accent" href="@p.RepoUrl" rel="noopener" target="_blank">View on GitHub</a>
+            <a class="btn-accent" href="@Model.CodeUrl" rel="noopener" target="_blank">View on GitHub</a>
         }
     </header>
 
@@ -64,6 +64,18 @@
         <section class="page-section" aria-labelledby="try-heading">
             <h2 id="try-heading" class="section-title">Try the model</h2>
             @await Html.PartialAsync("_TryModel", (Project: p, Schema: Model.Schema, Enabled: Model.FormEnabled))
+            @if (!string.IsNullOrWhiteSpace(Model.CodeUrl))
+            {
+                <p class="code-link">
+                    <span class="text-secondary">See how this model is built:</span>
+                    <a href="@Model.CodeUrl" rel="noopener" target="_blank">View the code on GitHub &rarr;</a>
+                    @if (!string.IsNullOrWhiteSpace(Model.NotebookUrl))
+                    {
+                        <span class="text-secondary">&middot;</span>
+                        <a href="@Model.NotebookUrl" rel="noopener" target="_blank">Notebook</a>
+                    }
+                </p>
+            }
         </section>
     }
 
@@ -72,13 +84,13 @@
         <section class="page-section" aria-labelledby="links-heading">
             <h2 id="links-heading" class="section-title">Links</h2>
             <ul class="link-list">
-                @if (!string.IsNullOrWhiteSpace(p.RepoUrl))
+                @if (!string.IsNullOrWhiteSpace(Model.CodeUrl))
                 {
-                    <li><a href="@p.RepoUrl" rel="noopener" target="_blank">GitHub repository</a></li>
+                    <li><a href="@Model.CodeUrl" rel="noopener" target="_blank">GitHub repository</a></li>
                 }
-                @if (!string.IsNullOrWhiteSpace(p.NotebookUrl))
+                @if (!string.IsNullOrWhiteSpace(Model.NotebookUrl))
                 {
-                    <li><a href="@p.NotebookUrl" rel="noopener" target="_blank">Notebook</a></li>
+                    <li><a href="@Model.NotebookUrl" rel="noopener" target="_blank">Notebook</a></li>
                 }
             </ul>
             @if (Model.Related.Count > 0)

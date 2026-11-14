@@ -207,6 +207,13 @@ Living technical record for ML Portfolio. Companion to [SPEC.md](../SPEC.md): th
   - Every model's write-up reports accuracy next to the majority-class baseline; where the model barely beats it (SVM) the page says so and leans on AUC.
 - **Consequences:** adding a model is a `train.py`, a catalog entry, a write-up and a line in the test lists. Charts that extrapolate (the SVM probability surface) are limited to the range with plenty of training data.
 
+## ADR-023: Derived GitHub links for project code
+
+- **Status:** accepted.
+- **Context:** Every project should link to its code under the form, but hand-writing a `repoUrl` per project repeats the repo URL and breaks silently when the repo moves.
+- **Decision:** `Site:RepoUrl` (monorepo) and `Site:RepoBranch` (default `main`) derive the links: `<repo>/tree/<branch>/ml/<slug>` and `<repo>/blob/<branch>/ml/<slug>/notebook.ipynb`. Only `live` projects get derived links (a placeholder has no code yet). A project's own `repoUrl`/`notebookUrl` wins and suppresses the derived notebook link, which is how a flagship split into its own repo overrides it. A trailing `.git` or slash is stripped. The link appears under the form, in the header and in the Links list.
+- **Consequences:** no per-project URLs to maintain. The links only resolve once the code is pushed; the configured remote's `main` currently holds only the initial commit.
+
 ## Phase Log
 
 Record what was actually built, deviations from the spec, gotchas and follow-ups. Add one entry per phase when it completes.
@@ -319,5 +326,10 @@ Record what was actually built, deviations from the spec, gotchas and follow-ups
   - Initial synthetic data was off: SVM AUC 0.62 (signal too weak), KNN 98% (too easy), naive Bayes below the baseline. The generators were retuned until results were plausible and honest.
   - A running dev server locks `bin\...\MLPortfolio.Web.exe`, which breaks `dotnet test`; stop it first.
   - Git Bash heredocs with apostrophes failed in one tool call; write Markdown files with the editor tool.
-- **Follow-ups:** gradient boosting (`onnxmltools`), then the unsupervised models once `schema.json` has cluster/projection outputs; GitHub remote and `repoUrl`; browser check of the form.
+- **Follow-ups:** gradient boosting (`onnxmltools`), then the unsupervised models once `schema.json` has cluster/projection outputs; browser check of the form; push the repo so the code links (ADR-023) resolve.
+
+#### Code links under the form (complete)
+
+- **Built:** `SiteOptions.RepoUrl/RepoBranch/CodeUrlFor/NotebookUrlFor`, view-model fields, a "View the code on GitHub" line under the form for live projects, `Site:RepoUrl` set to the configured remote, tests (placement, coming-soon, unset, override, normalisation). 144 tests pass.
+- **Not verified:** the links open real pages: `origin/main` has only the initial commit, so they 404 until the repo is pushed.
 ### Phase 6: Docker, CI, rate limiting, OpenGraph, deployment (not started)

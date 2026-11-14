@@ -92,6 +92,66 @@ public class ProjectPageTests(WebApplicationFactory<Program> factory) : IClassFi
         Assert.Contains("Strong market day", html);
     }
 
+    private const string Repo = "https://github.com/ekpixelmonk/EK.MLPortfolio";
+
+    [Fact]
+    public async Task LiveProject_ShowsCodeAndNotebookLinksUnderTheForm()
+    {
+        var (_, html) = await GetAsync(Client(), "/projects/logistic-regression");
+
+        var formEnd = html.IndexOf("id=\"try-heading\"", StringComparison.Ordinal);
+        var codeLink = html.IndexOf($"href=\"{Repo}/tree/main/ml/logistic-regression\"", html.IndexOf("code-link", StringComparison.Ordinal), StringComparison.Ordinal);
+        Assert.True(formEnd >= 0 && codeLink > formEnd, "the code link should come after the 'Try the model' heading");
+        Assert.Contains($"href=\"{Repo}/blob/main/ml/logistic-regression/notebook.ipynb\"", html);
+    }
+
+    [Fact]
+    public async Task ComingSoonProject_HasNoCodeLink()
+    {
+        var (_, html) = await GetAsync(Client(), "/projects/nse-regime");
+
+        Assert.DoesNotContain("View on GitHub", html);
+        Assert.DoesNotContain("code-link", html);
+    }
+
+    [Fact]
+    public async Task NoRepoConfigured_ShowsNoCodeLink()
+    {
+        using var custom = factory.WithWebHostBuilder(b => b.UseSetting("Site:RepoUrl", ""));
+
+        var (_, html) = await GetAsync(Client(custom), "/projects/logistic-regression");
+
+        Assert.DoesNotContain("View the code on GitHub", html);
+        Assert.DoesNotContain("View on GitHub", html);
+    }
+
+    [Fact]
+    public async Task ProjectRepoUrl_OverridesTheMonorepoFolder()
+    {
+        var json = """
+            [{ "slug": "logistic-regression", "title": "Logistic Regression", "category": "zoo", "summary": "s",
+               "status": "live", "inferenceMode": "onnx", "repoUrl": "https://github.com/someone/own-repo" }]
+            """;
+        using var custom = WithCatalog(json);
+
+        var (_, html) = await GetAsync(Client(custom), "/projects/logistic-regression");
+
+        Assert.Contains("href=\"https://github.com/someone/own-repo\"", html);
+        Assert.DoesNotContain("/tree/main/ml/logistic-regression", html);
+    }
+
+    [Theory]
+    [InlineData("https://github.com/o/r.git")]
+    [InlineData("https://github.com/o/r/")]
+    public async Task RepoUrl_IsNormalised(string configured)
+    {
+        using var custom = factory.WithWebHostBuilder(b => b.UseSetting("Site:RepoUrl", configured));
+
+        var (_, html) = await GetAsync(Client(custom), "/projects/linear-regression");
+
+        Assert.Contains("href=\"https://github.com/o/r/tree/main/ml/linear-regression\"", html);
+    }
+
     [Fact]
     public async Task NotLiveProjectWithSchema_ShowsFormAsDisabledPreview()
     {

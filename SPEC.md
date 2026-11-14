@@ -61,7 +61,7 @@ All code lives in this single repo initially. To keep any project extractable in
 2. Shared assets (e.g. chart styling) are copied into each project or published as a small package, never imported across folders.
 3. The trained `model.onnx` and `schema.json` are committed under `src/MLPortfolio.Web/App_Data/models/<slug>/`, so the site works regardless of where the training code lives.
 4. Each project's README "how to run" must work from a clean clone of its own folder.
-5. `repoUrl` and `notebookUrl` use deep links to the project folder; on a split, only these URLs change.
+5. Code links are derived: `Site:RepoUrl` (the monorepo) + `/tree/<branch>/ml/<slug>` and `/blob/<branch>/ml/<slug>/notebook.ipynb`, shown for live projects under the model form, in the header and in Links. A project's own `repoUrl`/`notebookUrl` overrides the derived link; on a split, only that URL changes.
 
 ## 4. Functional Requirements
 

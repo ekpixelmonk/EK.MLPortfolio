@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using MLPortfolio.Web.Models;
 using MLPortfolio.Web.Services;
 
@@ -7,7 +8,8 @@ namespace MLPortfolio.Web.Controllers;
 public class ProjectsController(
     IProjectCatalog catalog,
     ISchemaStore schemas,
-    IProjectContentStore content) : Controller
+    IProjectContentStore content,
+    IOptions<SiteOptions> site) : Controller
 {
     [HttpGet("/projects/{slug}")]
     public IActionResult Details(string slug)
@@ -22,7 +24,9 @@ public class ProjectsController(
             content.GetHtml(project.Slug),
             schema,
             FormEnabled: project.Status == ProjectStatuses.Live,
-            catalog.Related(project));
+            catalog.Related(project),
+            site.Value.CodeUrlFor(project),
+            site.Value.NotebookUrlFor(project));
         return View(model);
     }
 }
